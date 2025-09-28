@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enhanced Payment Validation - Nadchathra Mahal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+      border: none;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
+    }
+    .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 15px 15px 0 0 !important;
+      border: none;
+    }
+    .form-label {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 0.5rem;
+    }
+    .form-control, .form-select {
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 12px 15px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      transform: translateY(-1px);
+    }
+    .form-control.is-valid {
+      border-color: #28a745;
+    }
+    .form-control.is-invalid {
+      border-color: #dc3545;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      padding: 15px 30px;
+      font-weight: 600;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+    .btn-primary:disabled {
+      opacity: 0.7;
+      transform: none;
+      box-shadow: none;
+    }
+    .loading {
+      display: none;
+    }
+    .spinner-border-sm {
+      width: 1rem;
+      height: 1rem;
+    }
+    .alert {
+      border-radius: 8px;
+      border: none;
+      padding: 15px 20px;
+      margin: 15px 0;
+    }
+    .alert-success {
+      background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+      color: #155724;
+    }
+    .alert-danger {
+      background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+      color: #721c24;
+    }
+    .card-number-display {
+      font-family: 'Courier New', monospace;
+      font-size: 1.1em;
+      letter-spacing: 2px;
+      background: #f8f9fa;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 2px solid #e9ecef;
+    }
+    .validation-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .success-checkmark {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #28a745;
+      color: white;
+      text-align: center;
+      line-height: 24px;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="card w-75 mx-auto">
+      <div class="card-header text-center py-4">
+        <h2 class="mb-0">💳 Enhanced Payment Validation</h2>
+        <p class="mb-0 mt-2 opacity-75">Advanced payment processing for Nadchathra Mahal</p>
+      </div>
+      <div class="card-body p-4">
+        <form id="paymentForm" novalidate>
+        <!-- Name -->
+        <div class="mb-4">
+          <label for="name" class="form-label">
+            <i class="fas fa-user me-2"></i>Name on Card
+          </label>
+          <div class="position-relative">
+            <input type="text" class="form-control" id="name" placeholder="Enter full name" required>
+            <div class="validation-icon" id="nameIcon"></div>
+          </div>
+          <div class="invalid-feedback" id="nameError"></div>
+        </div>
+
+        <!-- Event Select -->
+        <div class="mb-4">
+          <label for="eventSelect" class="form-label">
+            <i class="fas fa-calendar-alt me-2"></i>Select Event
+          </label>
+          <div class="position-relative">
+            <select class="form-select" id="eventSelect" required>
+              <option value="">--Choose Event--</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Birthday">Birthday</option>
+              <option value="Conference">Conference</option>
+            </select>
+            <div class="validation-icon" id="eventIcon"></div>
+          </div>
+          <div class="invalid-feedback" id="eventError"></div>
+        </div>
+
+        <!-- Card Number -->
+        <div class="mb-4">
+          <label for="cardNumber" class="form-label">
+            <i class="fas fa-credit-card me-2"></i>Card Number
+          </label>
+          <div class="position-relative">
+            <input type="text" class="form-control" id="cardNumber" placeholder="1234567890123456" maxlength="16" required>
+            <div class="validation-icon" id="cardIcon"></div>
+          </div>
+          <div class="invalid-feedback" id="cardError"></div>
+          <small class="form-text text-muted">Enter 16-digit card number</small>
+        </div>
+
+        <!-- Expiry Date -->
+        <div class="mb-4">
+          <label class="form-label">
+            <i class="fas fa-calendar me-2"></i>Expiry Date
+          </label>
+          <div class="row">
+            <div class="col-6">
+              <div class="position-relative">
+                <select id="expiryMonth" class="form-select" required>
+                  <option value="">Month</option>
+                  <option value="01">Jan</option>
+                  <option value="02">Feb</option>
+                  <option value="03">Mar</option>
+                  <option value="04">Apr</option>
+                  <option value="05">May</option>
+                  <option value="06">Jun</option>
+                  <option value="07">Jul</option>
+                  <option value="08">Aug</option>
+                  <option value="09">Sep</option>
+                  <option value="10">Oct</option>
+                  <option value="11">Nov</option>
+                  <option value="12">Dec</option>
+                </select>
+                <div class="validation-icon" id="monthIcon"></div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="position-relative">
+                <input type="text" id="expiryYear" class="form-control" placeholder="YY" maxlength="2" required>
+                <div class="validation-icon" id="yearIcon"></div>
+              </div>
+            </div>
+          </div>
+          <div class="invalid-feedback" id="expiryError"></div>
+        </div>
+
+        <!-- CVV -->
+        <div class="mb-4">
+          <label for="cvv" class="form-label">
+            <i class="fas fa-shield-alt me-2"></i>CVV
+          </label>
+          <div class="position-relative">
+            <input type="text" class="form-control" id="cvv" placeholder="123" maxlength="3" required>
+            <div class="validation-icon" id="cvvIcon"></div>
+          </div>
+          <div class="invalid-feedback" id="cvvError"></div>
+          <small class="form-text text-muted">3-digit security code</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+          <span class="btn-text">Validate Card</span>
+          <span class="loading">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Processing...
+          </span>
+        </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">Payment Successful</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="successText" class="mb-0"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Enhanced Payment Form with Advanced JavaScript Functionality
+    
+    class PaymentValidator {
+      constructor() {
+        this.form = document.getElementById('paymentForm');
+        this.submitBtn = document.getElementById('submitBtn');
+        this.isSubmitting = false;
+        this.init();
+      }
+
+      init() {
+        this.setupEventListeners();
+        this.setupRealTimeValidation();
+        this.setupInputFormatting();
+        console.log('Enhanced Payment Validator initialized');
+      }
+
+      // Enhanced utility functions
+      showLoading() {
+        this.submitBtn.querySelector('.btn-text').style.display = 'none';
+        this.submitBtn.querySelector('.loading').style.display = 'inline-block';
+        this.submitBtn.disabled = true;
+        this.submitBtn.classList.add('pulse');
+        this.isSubmitting = true;
+      }
+
+      hideLoading() {
+        this.submitBtn.querySelector('.btn-text').style.display = 'inline-block';
+        this.submitBtn.querySelector('.loading').style.display = 'none';
+        this.submitBtn.disabled = false;
+        this.submitBtn.classList.remove('pulse');
+        this.isSubmitting = false;
+      }
+
+      showMessage(text, isError = false, duration = 5000) {
+        const alertClass = isError ? 'alert-danger' : 'alert-success';
+        const icon = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
+        
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert ${alertClass} fade-in`;
+        alertDiv.innerHTML = `
+          <i class="${icon} me-2"></i>
+          ${text}
+        `;
+        
+        // Remove existing alerts
+        const existingAlerts = document.querySelectorAll('.alert');
+        existingAlerts.forEach(alert => alert.remove());
+        
+        // Insert new alert
+        this.form.insertBefore(alertDiv, this.form.firstChild);
+        
+        // Auto-remove after duration
+        if (duration > 0) {
+          setTimeout(() => {
+            alertDiv.remove();
+          }, duration);
+        }
+      }
+
+      clearMessages() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => alert.remove());
+      }
+
+      maskCard(num) {
+        if (!/^[0-9]{16}$/.test(num)) return num;
+        return '**** **** **** ' + num.slice(-4);
+      }
+
+      // Enhanced validation with visual feedback
+      validateField(fieldId, value, rules) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(fieldId + 'Icon');
+        const errorDiv = document.getElementById(fieldId + 'Error');
+        
+        let isValid = true;
+        let errorMessage = '';
+
+        // Apply validation rules
+        for (const rule of rules) {
+          if (!rule.test(value)) {
+            isValid = false;
+            errorMessage = rule.message;
+            break;
+          }
+        }
+
+        // Update visual feedback
+        if (isValid && value.length > 0) {
+          field.classList.remove('is-invalid');
+          field.classList.add('is-valid');
+          icon.innerHTML = '<i class="fas fa-check text-success"></i>';
+          errorDiv.textContent = '';
+        } else if (value.length > 0) {
+          field.classList.remove('is-valid');
+          field.classList.add('is-invalid');
+          icon.innerHTML = '<i class="fas fa-times text-danger"></i>';
+          errorDiv.textContent = errorMessage;
+        } else {
+          field.classList.remove('is-valid', 'is-invalid');
+          icon.innerHTML = '';
+          errorDiv.textContent = '';
+        }
+
+        return isValid;
+      }
+
+      // Comprehensive form validation
+      validateForm() {
+        const name = document.getElementById('name').value.trim();
+        const event = document.getElementById('eventSelect').value;
+        const cardNumber = document.getElementById('cardNumber').value.trim();
+        const month = document.getElementById('expiryMonth').value;
+        const year = document.getElementById('expiryYear').value.trim();
+        const cvv = document.getElementById('cvv').value.trim();
+
+        // Validation rules
+        const validationRules = {
+          name: [
+            { test: (v) => v.length >= 2, message: 'Name must be at least 2 characters' },
+            { test: (v) => /^[a-zA-Z\s]+$/.test(v), message: 'Name can only contain letters and spaces' }
+          ],
+          eventSelect: [
+            { test: (v) => v !== '', message: 'Please select an event' }
+          ],
+          cardNumber: [
+            { test: (v) => /^\d{16}$/.test(v), message: 'Card number must be exactly 16 digits' }
+          ],
+          expiryMonth: [
+            { test: (v) => v !== '', message: 'Please select a month' }
+          ],
+          expiryYear: [
+            { test: (v) => /^\d{2}$/.test(v), message: 'Year must be 2 digits' }
+          ],
+          cvv: [
+            { test: (v) => /^\d{3}$/.test(v), message: 'CVV must be exactly 3 digits' }
+          ]
+        };
+
+        // Validate all fields
+        let isFormValid = true;
+        isFormValid &= this.validateField('name', name, validationRules.name);
+        isFormValid &= this.validateField('eventSelect', event, validationRules.eventSelect);
+        isFormValid &= this.validateField('cardNumber', cardNumber, validationRules.cardNumber);
+        isFormValid &= this.validateField('expiryMonth', month, validationRules.expiryMonth);
+        isFormValid &= this.validateField('expiryYear', year, validationRules.expiryYear);
+        isFormValid &= this.validateField('cvv', cvv, validationRules.cvv);
+
+        // Additional expiry date validation
+        if (month && year && /^\d{2}$/.test(year)) {
+          const now = new Date();
+          const nowYY = now.getFullYear() % 100;
+          const nowMM = now.getMonth() + 1;
+          const yy = parseInt(year, 10);
+          const mm = parseInt(month, 10);
+          
+          if (yy < nowYY || (yy === nowYY && mm < nowMM)) {
+            this.validateField('expiryYear', '', [{ test: () => false, message: 'Card is expired' }]);
+            isFormValid = false;
+          }
+        }
+
+        return isFormValid;
+      }
+
+      // Setup real-time validation
+      setupRealTimeValidation() {
+        const fields = ['name', 'eventSelect', 'cardNumber', 'expiryMonth', 'expiryYear', 'cvv'];
+        
+        fields.forEach(fieldId => {
+          const field = document.getElementById(fieldId);
+          field.addEventListener('blur', () => {
+            this.validateForm();
+          });
+          
+          field.addEventListener('input', () => {
+            // Clear validation state on input
+            const icon = document.getElementById(fieldId + 'Icon');
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            field.classList.remove('is-valid', 'is-invalid');
+            icon.innerHTML = '';
+            errorDiv.textContent = '';
+          });
+        });
+      }
+
+      // Setup input formatting
+      setupInputFormatting() {
+        // Card number formatting
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, '');
+          if (value.length > 16) value = value.substring(0, 16);
+          e.target.value = value;
+        });
+
+        // CVV formatting
+        document.getElementById('cvv').addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, '');
+          if (value.length > 3) value = value.substring(0, 3);
+          e.target.value = value;
+        });
+
+        // Year formatting
+        document.getElementById('expiryYear').addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, '');
+          if (value.length > 2) value = value.substring(0, 2);
+          e.target.value = value;
+        });
+
+        // Name formatting (capitalize first letter of each word)
+        document.getElementById('name').addEventListener('input', function(e) {
+          let value = e.target.value;
+          value = value.replace(/\b\w/g, l => l.toUpperCase());
+          e.target.value = value;
+        });
+      }
+
+      // Setup event listeners
+      setupEventListeners() {
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+      }
+
+      // Enhanced form submission handler
+      async handleSubmit(e) {
+        e.preventDefault();
+        
+        if (this.isSubmitting) return;
+        
+        this.clearMessages();
+        
+        // Validate form
+        if (!this.validateForm()) {
+          this.showMessage('❌ Please fix the errors above before submitting.', true);
+          return;
+        }
+
+        // Get form data
+        const formData = {
+          name: document.getElementById('name').value.trim(),
+          eventName: document.getElementById('eventSelect').value,
+          cardNumber: document.getElementById('cardNumber').value.trim(),
+          expiryMonth: document.getElementById('expiryMonth').value,
+          expiryYear: document.getElementById('expiryYear').value.trim(),
+          cvv: document.getElementById('cvv').value.trim()
+        };
+
+        this.showLoading();
+
+        try {
+          // Use XMLHttpRequest for better compatibility
+          const response = await this.sendPaymentRequest(formData);
+          
+          if (response.status === 'COMPLETED') {
+            this.showSuccessModal(formData, response);
+            this.resetForm();
+          } else {
+            this.showMessage(`❌ ${response.message || 'Payment validation failed.'}`, true);
+          }
+        } catch (error) {
+          console.error('Payment error:', error);
+          this.showMessage(`❌ ${error.message}`, true);
+        } finally {
+          this.hideLoading();
+        }
+      }
+
+      // Send payment request using XMLHttpRequest
+      sendPaymentRequest(formData) {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/api/payments/validate', true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.setRequestHeader('Accept', 'application/json');
+
+          xhr.onload = function() {
+            console.log('XHR Response status:', xhr.status);
+            console.log('XHR Response text:', xhr.responseText);
+
+            if (xhr.status >= 200 && xhr.status < 300) {
+              try {
+                const data = JSON.parse(xhr.responseText);
+                resolve(data);
+              } catch (error) {
+                reject(new Error('Invalid server response'));
+              }
+            } else {
+              reject(new Error(`Server error: ${xhr.status}`));
+            }
+          };
+
+          xhr.onerror = function() {
+            reject(new Error('Network error. Please check your connection.'));
+          };
+
+          xhr.send(JSON.stringify(formData));
+        });
+      }
+
+      // Enhanced success modal
+      showSuccessModal(formData, response) {
+        const masked = this.maskCard(formData.cardNumber);
+        const successText = document.getElementById('successText');
+        
+        successText.innerHTML = `
+          <div class="text-center fade-in">
+            <div class="success-checkmark">✓</div>
+            <h5 class="text-success mb-3">Payment Successful!</h5>
+            <div class="card p-3 mb-3" style="background: #f8f9fa;">
+              <p class="mb-2"><strong>Name:</strong> ${formData.name}</p>
+              <p class="mb-2"><strong>Event:</strong> ${formData.eventName}</p>
+              <p class="mb-2"><strong>Card:</strong> <span class="card-number-display">${masked}</span></p>
+              <p class="mb-0"><strong>Amount:</strong> $100.00</p>
+            </div>
+            <hr>
+            <p class="text-muted small">Your payment has been processed and saved to the database.</p>
+            <p class="text-muted small">Transaction ID: ${Date.now()}</p>
+            <div class="mt-3">
+              <a href="/admin.html" class="btn btn-outline-primary btn-sm" target="_blank">
+                <i class="fas fa-chart-line me-1"></i>View in Admin Panel
+              </a>
+            </div>
+          </div>
+        `;
+
+        const modalEl = document.getElementById('successModal');
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+      }
+
+      // Reset form with animation
+      resetForm() {
+        this.form.reset();
+        
+        // Clear all validation states
+        const fields = ['name', 'eventSelect', 'cardNumber', 'expiryMonth', 'expiryYear', 'cvv'];
+        fields.forEach(fieldId => {
+          const field = document.getElementById(fieldId);
+          const icon = document.getElementById(fieldId + 'Icon');
+          const errorDiv = document.getElementById(fieldId + 'Error');
+          
+          field.classList.remove('is-valid', 'is-invalid');
+          icon.innerHTML = '';
+          errorDiv.textContent = '';
+        });
+        
+        this.clearMessages();
+      }
+    }
+
+    // Initialize the payment validator when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      new PaymentValidator();
+      console.log('Enhanced Payment Form loaded successfully');
+    });
+  </script>
+</body>
+</html>

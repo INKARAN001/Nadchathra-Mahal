@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard - Nadchathra Mahal</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: #2c3e50; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .section { background: white; margin-bottom: 20px; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .section h3 { color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; font-weight: bold; color: #2c3e50; }
+        tr:hover { background-color: #f5f5f5; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; }
+        .stat-number { font-size: 2em; font-weight: bold; margin-bottom: 5px; }
+        .stat-label { font-size: 0.9em; opacity: 0.9; }
+        .btn { background: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-block; margin: 5px; }
+        .btn:hover { background: #2980b9; }
+        .btn-danger { background: #e74c3c; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-success { background: #27ae60; }
+        .btn-success:hover { background: #229954; }
+        .search-box { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px; }
+        .status-pending { color: #f39c12; font-weight: bold; }
+        .status-confirmed { color: #27ae60; font-weight: bold; }
+        .status-cancelled { color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🏛️ Nadchathra Mahal - Admin Dashboard</h1>
+        <p>Manage bookings and view feedback</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number" id="totalBookings">0</div>
+            <div class="stat-label">Total Bookings</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalFeedback">0</div>
+            <div class="stat-label">Customer Feedback</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="avgRating">0.0</div>
+            <div class="stat-label">Average Rating</div>
+        </div>
+    </div>
+
+    <!-- Bookings Section -->
+    <div class="section">
+        <h3>📅 Recent Bookings</h3>
+        <input type="text" class="search-box" id="bookingSearch" placeholder="Search bookings by customer name or event...">
+        <table id="bookingsTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Event</th>
+                <th>Hall</th>
+                <th>Date</th>
+                <th>Guests</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="bookingsBody">
+            <!-- Data will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Feedback Section -->
+    <div class="section">
+        <h3>💬 Customer Feedback</h3>
+        <input type="text" class="search-box" id="feedbackSearch" placeholder="Search feedback by customer name...">
+        <table id="feedbackTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Rating</th>
+                <th>Category</th>
+                <th>Comments</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody id="feedbackBody">
+            <!-- Data will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Actions -->
+    <div class="section">
+        <h3>🔧 Quick Actions</h3>
+        <a href="/dashboard" class="btn">🏠 Dashboard</a>
+        <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+        <button onclick="refreshData()" class="btn btn-success">🔄 Refresh Data</button>
+        <button onclick="exportData()" class="btn">📊 Export Data</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        loadBookings();
+        loadFeedback();
+        loadStatistics();
+    });
+
+    async function loadBookings() {
+        try {
+            const response = await fetch('/api/bookings/all');
+            const bookings = await response.json();
+            displayBookings(bookings);
+        } catch (error) {
+            console.error('Error loading bookings:', error);
+            document.getElementById('bookingsBody').innerHTML = '<tr><td colspan="9">Error loading bookings</td></tr>';
+        }
+    }
+
+    async function loadFeedback() {
+        try {
+            const response = await fetch('/api/feedback/all');
+            const feedback = await response.json();
+            displayFeedback(feedback);
+        } catch (error) {
+            console.error('Error loading feedback:', error);
+            document.getElementById('feedbackBody').innerHTML = '<tr><td colspan="6">Error loading feedback</td></tr>';
+        }
+    }
+
+    async function loadStatistics() {
+        try {
+            const [bookingsRes, feedbackRes] = await Promise.all([
+                fetch('/api/bookings/all'),
+                fetch('/api/feedback/all')
+            ]);
+            const bookings = await bookingsRes.json();
+            const feedback = await feedbackRes.json();
+
+            const totalBookings = bookings.length;
+            const totalFeedback = feedback.length;
+            const avgRating = feedback.length > 0 ?
+                (feedback.reduce((sum, f) => sum + f.rating, 0) / feedback.length).toFixed(1) : 0;
+
+            document.getElementById('totalBookings').textContent = totalBookings;
+            document.getElementById('totalFeedback').textContent = totalFeedback;
+            document.getElementById('avgRating').textContent = avgRating;
+        } catch (error) {
+            console.error('Error loading statistics:', error);
+        }
+    }
+
+    function displayBookings(bookings) {
+        const tbody = document.getElementById('bookingsBody');
+        tbody.innerHTML = bookings.map(booking => `
+            <tr>
+                <td>${booking.bookingId}</td>
+                <td>${booking.customerName}</td>
+                <td>${booking.eventName}</td>
+                <td>${booking.hall}</td>
+                <td>${new Date(booking.eventDate).toLocaleDateString()}</td>
+                <td>${booking.expectedGuests}</td>
+                <td>₹${booking.totalPrice || 0}</td>
+                <td><span class="status-${booking.status?.toLowerCase()}">${booking.status || 'Pending'}</span></td>
+                <td>
+                    <button onclick="updateBookingStatus(${booking.bookingId}, 'confirmed')" class="btn btn-success">✓</button>
+                    <button onclick="updateBookingStatus(${booking.bookingId}, 'cancelled')" class="btn btn-danger">✗</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function displayFeedback(feedback) {
+        const tbody = document.getElementById('feedbackBody');
+        tbody.innerHTML = feedback.map(f => `
+            <tr>
+                <td>${f.feedbackId}</td>
+                <td>${f.customerName}</td>
+                <td>${'⭐'.repeat(f.rating)} (${f.rating}/5)</td>
+                <td>${f.category || 'N/A'}</td>
+                <td>${(f.comments || f.message || '').substring(0, 50)}${(f.comments || f.message || '').length > 50 ? '...' : ''}</td>
+                <td>${new Date(f.createdAt).toLocaleDateString()}</td>
+            </tr>
+        `).join('');
+    }
+
+    async function updateBookingStatus(bookingId, status) {
+        try {
+            const response = await fetch(`/api/bookings/${bookingId}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+            if (response.ok) {
+                alert(`Booking ${bookingId} updated to ${status}`);
+                loadBookings();
+                loadStatistics();
+            } else {
+                const err = await response.json();
+                alert('Error updating booking: ' + (err.message || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error updating booking:', error);
+            alert('Error updating booking: ' + error.message);
+        }
+    }
+
+    function refreshData() {
+        loadBookings();
+        loadFeedback();
+        loadStatistics();
+        alert('Data refreshed!');
+    }
+
+    function exportData() {
+        Promise.all([
+            fetch('/api/bookings/all').then(res => res.json()),
+            fetch('/api/feedback/all').then(res => res.json())
+        ]).then(([bookings, feedback]) => {
+            let csv = 'Bookings\nID,Customer,Event,Hall,Date,Guests,Total,Status\n';
+            bookings.forEach(b => {
+                csv += `${b.bookingId},${b.customerName},${b.eventName},${b.hall},${new Date(b.eventDate).toLocaleDateString()},${b.expectedGuests},${b.totalPrice || 0},${b.status || 'Pending'}\n`;
+            });
+            csv += '\nFeedback\nID,Customer,Rating,Category,Comments,Date\n';
+            feedback.forEach(f => {
+                csv += `${f.feedbackId},${f.customerName},${f.rating},${f.category || 'N/A'},${(f.comments || f.message || '').replace(/,/g, ';')},${new Date(f.createdAt).toLocaleDateString()}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nadchathra_data.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }).catch(error => {
+            console.error('Error exporting data:', error);
+            alert('Error exporting data: ' + error.message);
+        });
+    }
+
+    document.getElementById('bookingSearch').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('#bookingsBody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    document.getElementById('feedbackSearch').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('#feedbackBody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+</script>
+</body>
+</html>

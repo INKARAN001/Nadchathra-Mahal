@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book Your Event - Nadchathra Mahal</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 30px; }
+        .form-section { margin-bottom: 30px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; }
+        .form-section h3 { color: #34495e; margin-top: 0; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; color: #2c3e50; font-weight: bold; }
+        input[type="text"], input[type="number"], input[type="date"], select, textarea { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .radio-group { display: flex; gap: 20px; flex-wrap: wrap; }
+        .radio-item { display: flex; align-items: center; gap: 5px; }
+        .checkbox-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid #e0e0e0; border-radius: 5px; }
+        .price { color: #27ae60; font-weight: bold; }
+        .total-price { font-size: 18px; font-weight: bold; color: #e74c3c; margin-top: 10px; }
+        .submit-btn {
+            width: 100%;
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover { background-color: #c0392b; }
+        .logout-link { text-align: center; margin-top: 20px; }
+        .logout-link a { color: #3498db; text-decoration: none; margin: 0 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Book Your Event at Nadchathra Mahal</h1>
+
+    <form id="bookingForm">
+        <!-- Customer Details -->
+        <div class="form-section">
+            <h3>Customer Information</h3>
+            <div class="form-group">
+                <label for="customerName">Your Name:</label>
+                <input type="text" id="customerName" name="customerName" required/>
+            </div>
+        </div>
+
+        <!-- Event Details -->
+        <div class="form-section">
+            <h3>Event Details</h3>
+            <div class="form-group">
+                <label for="eventName">Event Name:</label>
+                <input type="text" id="eventName" name="eventName" required/>
+            </div>
+
+            <div class="form-group">
+                <label>Event Type:</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="wedding" name="eventType" value="Wedding" required/>
+                        <label for="wedding">Wedding</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="birthday" name="eventType" value="Birthday" required/>
+                        <label for="birthday">Birthday</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="meeting" name="eventType" value="Meeting" required/>
+                        <label for="meeting">Meeting</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="conference" name="eventType" value="Conference" required/>
+                        <label for="conference">Conference</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Hall Selection:</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="hall1" name="hall" value="Hall 1" data-price="1000" required/>
+                        <label for="hall1">Hall 1 (Capacity: 100) <span class="price">₹1000</span></label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="hall2" name="hall" value="Hall 2" data-price="1500" required/>
+                        <label for="hall2">Hall 2 (Capacity: 150) <span class="price">₹1500</span></label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="outdoor" name="hall" value="Outdoor" data-price="2000" required/>
+                        <label for="outdoor">Outdoor (Capacity: 200) <span class="price">₹2000</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="expectedGuests">Number of Guests:</label>
+                <input type="number" id="expectedGuests" name="expectedGuests" min="1" max="200" required/>
+            </div>
+
+            <div class="form-group">
+                <label for="eventDate">Event Date:</label>
+                <input type="date" id="eventDate" name="eventDate" required/>
+            </div>
+        </div>
+
+        <!-- Food Selection -->
+        <div class="form-section">
+            <h3>Food Selection</h3>
+            <div class="form-group">
+                <label>Main Food Items:</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="food1" name="foodIds" value="1" data-price="250"/>
+                        <label for="food1">Biryani <span class="price">₹250</span></label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="food2" name="foodIds" value="2" data-price="200"/>
+                        <label for="food2">Chicken Curry <span class="price">₹200</span></label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="food3" name="foodIds" value="3" data-price="300"/>
+                        <label for="food3">Mutton Curry <span class="price">₹300</span></label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="food4" name="foodIds" value="4" data-price="250"/>
+                        <label for="food4">Fish Curry <span class="price">₹250</span></label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="food5" name="foodIds" value="5" data-price="150"/>
+                        <label for="food5">Vegetable Curry <span class="price">₹150</span></label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="food6" name="foodIds" value="6" data-price="50"/>
+                        <label for="food6">Rice <span class="price">₹50</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Additional Curries (Extra Cost):</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="extra1" name="foodIds" value="7" data-price="400"/>
+                        <label for="extra1">Prawn Curry <span class="price">₹400</span></label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="extra2" name="foodIds" value="8" data-price="350"/>
+                        <label for="extra2">Crab Curry <span class="price">₹350</span></label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="extra3" name="foodIds" value="9" data-price="500"/>
+                        <label for="extra3">Lobster Curry <span class="price">₹500</span></label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="extra4" name="foodIds" value="10" data-price="300"/>
+                        <label for="extra4">Special Fish Curry <span class="price">₹300</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="total-price" id="totalPrice">Total: ₹0</div>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit Booking Request</button>
+    </form>
+
+    <div class="logout-link">
+        <a th:href="@{/dashboard}">Dashboard</a> |
+        <a th:href="@{/admin}">Admin Dashboard</a> |
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('eventDate').min = new Date().toISOString().split('T')[0];
+
+    const form = document.getElementById('bookingForm');
+    const totalPriceEl = document.getElementById('totalPrice');
+
+    function calculateTotal() {
+        let total = 0;
+
+        // Add hall price
+        const hall = document.querySelector('input[name="hall"]:checked');
+        if(hall) total += parseInt(hall.dataset.price);
+
+        // Add food prices
+        const foods = document.querySelectorAll('input[name="foodIds"]:checked');
+        foods.forEach(food => total += parseInt(food.dataset.price));
+
+        totalPriceEl.textContent = 'Total: ₹' + total;
+    }
+
+    // Listen for changes
+    document.querySelectorAll('input[name="hall"], input[name="foodIds"]').forEach(input => {
+        input.addEventListener('change', calculateTotal);
+    });
+
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const bookingData = {
+            customerName: formData.get('customerName'),
+            eventName: formData.get('eventName'),
+            hall: formData.get('hall'),
+            expectedGuests: parseInt(formData.get('expectedGuests')),
+            eventDate: formData.get('eventDate'),
+            foodIds: Array.from(formData.getAll('foodIds')).map(id => parseInt(id))
+        };
+
+        fetch('/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bookingData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Booking submitted successfully! Booking ID: ' + data.bookingId);
+            window.location.href = '/feedback';
+        })
+        .catch(error => {
+            alert('Error submitting booking: ' + error.message);
+        });
+    });
+</script>
+</body>
+</html>

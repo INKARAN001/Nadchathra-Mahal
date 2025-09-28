@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Authentication</title>
+</head>
+<body>
+    <h1>Test User Registration and Login</h1>
+    
+    <h2>Register New User</h2>
+    <form id="registerForm">
+        <input type="text" id="fullName" placeholder="Full Name" value="Test User"><br><br>
+        <input type="text" id="username" placeholder="Username" value="testuser"><br><br>
+        <input type="email" id="email" placeholder="Email" value="test@example.com"><br><br>
+        <input type="text" id="phone" placeholder="Phone" value="1234567890"><br><br>
+        <input type="password" id="password" placeholder="Password" value="test123"><br><br>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" value="test123"><br><br>
+        <button type="submit">Register</button>
+    </form>
+    
+    <div id="registerResult"></div>
+    
+    <h2>Login</h2>
+    <form id="loginForm">
+        <input type="text" id="loginUsername" placeholder="Username" value="testuser"><br><br>
+        <input type="password" id="loginPassword" placeholder="Password" value="test123"><br><br>
+        <button type="submit">Login</button>
+    </form>
+    
+    <div id="loginResult"></div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                password: document.getElementById('password').value,
+                confirmPassword: document.getElementById('confirmPassword').value
+            };
+            
+            try {
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                document.getElementById('registerResult').innerHTML = 
+                    '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('registerResult').innerHTML = 
+                    '<p style="color: red;">Error: ' + error.message + '</p>';
+            }
+        });
+        
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                username: document.getElementById('loginUsername').value,
+                password: document.getElementById('loginPassword').value
+            };
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                document.getElementById('loginResult').innerHTML = 
+                    '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('loginResult').innerHTML = 
+                    '<p style="color: red;">Error: ' + error.message + '</p>';
+            }
+        });
+    </script>
+</body>
+</html>

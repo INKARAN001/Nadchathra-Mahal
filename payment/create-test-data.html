@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Test Data - Nadchathra Mahal</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .user-info { margin: 10px 0; padding: 10px; background-color: #f8f9fa; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Create Test Data for Nadchathra Mahal</h1>
+    
+    <div class="test-section">
+        <h3>Test Users Created</h3>
+        <div class="user-info">
+            <strong>user1</strong> - password: user123 - Email: user1@example.com
+        </div>
+        <div class="user-info">
+            <strong>user2</strong> - password: user234 - Email: user2@example.com
+        </div>
+        <div class="user-info">
+            <strong>user3</strong> - password: user345 - Email: user3@example.com
+        </div>
+        <div class="user-info">
+            <strong>user4</strong> - password: user456 - Email: user4@example.com
+        </div>
+        <div class="user-info">
+            <strong>user5</strong> - password: user567 - Email: user5@example.com
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Create Test Event Requirements</h3>
+        <button onclick="createTestRequirements()">Create 5 Test Event Requirements</button>
+        <div id="create-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>View All Requirements</h3>
+        <button onclick="viewAllRequirements()">View All Requirements</button>
+        <div id="view-result"></div>
+    </div>
+
+    <script>
+        const testRequirements = [
+            {
+                fullName: "Test User 1",
+                email: "user1@example.com",
+                phone: "1111111111",
+                eventType: "Wedding",
+                eventDate: "2024-12-01",
+                guestCount: 100,
+                budget: "LKR 300,000 - 500,000",
+                specialRequirements: "Garden wedding, live music",
+                cardNumber: "1111111111111111",
+                expiryMonth: "01",
+                expiryYear: "26",
+                cvv: "111",
+                cardHolderName: "Test User 1",
+                cuisineType: "Indian",
+                mealType: "Full Day",
+                dietaryRestrictions: "vegetarian",
+                beveragePreferences: "teaCoffee, freshJuices",
+                foodNotes: "Traditional Sri Lankan cuisine"
+            },
+            {
+                fullName: "Test User 2",
+                email: "user2@example.com",
+                phone: "2222222222",
+                eventType: "Birthday",
+                eventDate: "2024-11-15",
+                guestCount: 75,
+                budget: "LKR 150,000 - 300,000",
+                specialRequirements: "Kids party, entertainment",
+                cardNumber: "2222222222222222",
+                expiryMonth: "02",
+                expiryYear: "27",
+                cvv: "222",
+                cardHolderName: "Test User 2",
+                cuisineType: "Continental",
+                mealType: "Dinner",
+                dietaryRestrictions: "none",
+                beveragePreferences: "softDrinks",
+                foodNotes: "Kid-friendly menu"
+            },
+            {
+                fullName: "Test User 3",
+                email: "user3@example.com",
+                phone: "3333333333",
+                eventType: "Conference",
+                eventDate: "2024-10-20",
+                guestCount: 300,
+                budget: "LKR 400,000 - 600,000",
+                specialRequirements: "Corporate event, AV setup",
+                cardNumber: "3333333333333333",
+                expiryMonth: "03",
+                expiryYear: "28",
+                cvv: "333",
+                cardHolderName: "Test User 3",
+                cuisineType: "Mixed",
+                mealType: "Full Day",
+                dietaryRestrictions: "none",
+                beveragePreferences: "teaCoffee, softDrinks",
+                foodNotes: "Professional catering"
+            },
+            {
+                fullName: "Test User 4",
+                email: "user4@example.com",
+                phone: "4444444444",
+                eventType: "Anniversary",
+                eventDate: "2024-09-30",
+                guestCount: 60,
+                budget: "LKR 200,000 - 400,000",
+                specialRequirements: "Romantic dinner, candlelight",
+                cardNumber: "4444444444444444",
+                expiryMonth: "04",
+                expiryYear: "29",
+                cvv: "444",
+                cardHolderName: "Test User 4",
+                cuisineType: "Italian",
+                mealType: "Dinner",
+                dietaryRestrictions: "none",
+                beveragePreferences: "alcoholic, softDrinks",
+                foodNotes: "Fine dining experience"
+            },
+            {
+                fullName: "Test User 5",
+                email: "user5@example.com",
+                phone: "5555555555",
+                eventType: "Graduation",
+                eventDate: "2024-08-25",
+                guestCount: 120,
+                budget: "LKR 250,000 - 450,000",
+                specialRequirements: "Celebration party, photo booth",
+                cardNumber: "5555555555555555",
+                expiryMonth: "05",
+                expiryYear: "30",
+                cvv: "555",
+                cardHolderName: "Test User 5",
+                cuisineType: "Chinese",
+                mealType: "Lunch",
+                dietaryRestrictions: "none",
+                beveragePreferences: "teaCoffee, freshJuices",
+                foodNotes: "Buffet style service"
+            }
+        ];
+
+        function createTestRequirements() {
+            const resultDiv = document.getElementById('create-result');
+            resultDiv.innerHTML = '<p>Creating test requirements...</p>';
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            testRequirements.forEach((req, index) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/user-requirements', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.setRequestHeader('Accept', 'application/json');
+                
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        successCount++;
+                        console.log(`Successfully created requirement ${index + 1}`);
+                    } else {
+                        errorCount++;
+                        console.error(`Failed to create requirement ${index + 1}:`, xhr.status, xhr.responseText);
+                    }
+                    
+                    if (successCount + errorCount === testRequirements.length) {
+                        resultDiv.innerHTML = `
+                            <div class="success">
+                                <strong>Creation Complete!</strong><br>
+                                Successfully created: ${successCount} requirements<br>
+                                Failed: ${errorCount} requirements
+                            </div>
+                        `;
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    errorCount++;
+                    console.error(`Network error creating requirement ${index + 1}`);
+                    if (successCount + errorCount === testRequirements.length) {
+                        resultDiv.innerHTML = `
+                            <div class="error">
+                                <strong>Creation Complete!</strong><br>
+                                Successfully created: ${successCount} requirements<br>
+                                Failed: ${errorCount} requirements
+                            </div>
+                        `;
+                    }
+                };
+                
+                xhr.send(JSON.stringify(req));
+            });
+        }
+        
+        function viewAllRequirements() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/user-requirements', true);
+            xhr.setRequestHeader('Accept', 'application/json');
+            
+            xhr.onload = function() {
+                const resultDiv = document.getElementById('view-result');
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    const requirements = JSON.parse(xhr.responseText);
+                    let html = `<div class="success"><strong>Found ${requirements.length} requirements:</strong><br><br>`;
+                    
+                    requirements.forEach((req, index) => {
+                        html += `
+                            <div class="user-info">
+                                <strong>${index + 1}. ${req.fullName}</strong> (${req.email})<br>
+                                Event: ${req.eventType} on ${req.eventDate}<br>
+                                Guests: ${req.guestCount} | Budget: ${req.budget}<br>
+                                Status: <strong>${req.approvalStatus || 'PENDING'}</strong><br>
+                                ID: ${req.id}
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<div class="error"><strong>ERROR:</strong> Status ${xhr.status} - ${xhr.responseText}</div>`;
+                }
+            };
+            
+            xhr.onerror = function() {
+                document.getElementById('view-result').innerHTML = '<div class="error"><strong>NETWORK ERROR:</strong> Could not connect to server</div>';
+            };
+            
+            xhr.send();
+        }
+    </script>
+</body>
+</html>

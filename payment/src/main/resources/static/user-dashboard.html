@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Nadchathra Mahal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .dashboard-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            margin: 2rem;
+            overflow: hidden;
+        }
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+        }
+        .dashboard-body {
+            padding: 2rem;
+        }
+        .status-card {
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .status-pending {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-left: 5px solid #ffc107;
+        }
+        .status-approved {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-left: 5px solid #28a745;
+        }
+        .status-rejected {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-left: 5px solid #dc3545;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 25px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+            transform: translateY(-2px);
+        }
+        .btn-logout {
+            background: #dc3545;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn-logout:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+        .no-bookings {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+        .star-rating {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+        }
+        .star {
+            transition: color 0.2s;
+            margin-right: 5px;
+        }
+        .star:hover,
+        .star.active {
+            color: #ffc107;
+        }
+        .star.selected {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2><i class="fas fa-user me-2"></i>User Dashboard</h2>
+                        <p class="mb-0">Welcome back, <span id="userName">User</span>!</p>
+                    </div>
+                    <button class="btn btn-logout" onclick="logout()">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-body">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h4><i class="fas fa-calendar-alt me-2"></i>My Bookings</h4>
+                                <p class="text-muted">View and manage your event bookings</p>
+                            </div>
+        <div>
+            <button class="btn btn-primary" onclick="window.location.href='/user-requirement.html'">
+                <i class="fas fa-plus me-1"></i>Book New Event
+            </button>
+        </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="bookingsContainer">
+                    <div class="loading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading your bookings...</p>
+                    </div>
+                </div>
+
+                <!-- Simple Feedback Section -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0"><i class="fas fa-star me-2"></i>Rate Your Experience</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted">How was your experience with Nadchathra Mahal?</p>
+                                <div class="rating-section">
+                                    <div class="star-rating mb-3">
+                                        <span class="star" data-rating="1">★</span>
+                                        <span class="star" data-rating="2">★</span>
+                                        <span class="star" data-rating="3">★</span>
+                                        <span class="star" data-rating="4">★</span>
+                                        <span class="star" data-rating="5">★</span>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="submitFeedback()" id="submitFeedbackBtn">
+                                        <i class="fas fa-paper-plane me-1"></i>Submit Rating
+                                    </button>
+                                    <div id="feedbackMessage" class="mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        class UserDashboard {
+            constructor() {
+                this.userName = sessionStorage.getItem('username') || 'User';
+                this.userType = sessionStorage.getItem('userType') || 'user';
+                this.bookings = [];
+                this.selectedRating = 0;
+                this.init();
+            }
+
+            init() {
+                this.checkAuthentication();
+                this.displayUserName();
+                this.loadUserBookings();
+                this.initializeStarRating();
+                console.log('User Dashboard initialized');
+            }
+
+            checkAuthentication() {
+                const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+                const userType = sessionStorage.getItem('userType');
+                const userId = sessionStorage.getItem('userId');
+                
+                if (!isLoggedIn || userType !== 'user' || !userId) {
+                    alert('Access denied. Please login as a user first.');
+                    window.location.href = '/login.html';
+                    return false;
+                }
+                return true;
+            }
+
+            displayUserName() {
+                document.getElementById('userName').textContent = this.userName;
+            }
+
+            loadUserBookings() {
+                // Load user bookings from API
+                this.loadBookingsFromAPI();
+            }
+
+            loadBookingsFromAPI() {
+                const currentUserId = parseInt(sessionStorage.getItem('userId'));
+                console.log('Session storage userId:', sessionStorage.getItem('userId'));
+                console.log('Parsed currentUserId:', currentUserId);
+                
+                if (!currentUserId) {
+                    console.error('No user ID found in session storage');
+                    // Try to get user ID from login data
+                    const loginData = sessionStorage.getItem('loginData');
+                    if (loginData) {
+                        try {
+                            const userData = JSON.parse(loginData);
+                            console.log('Found user data in loginData:', userData);
+                            if (userData.id) {
+                                console.log('Using user ID from loginData:', userData.id);
+                                this.loadBookingsForUser(userData.id);
+                                return;
+                            }
+                        } catch (e) {
+                            console.error('Error parsing loginData:', e);
+                        }
+                    }
+                    this.bookings = [];
+                    this.displayBookings();
+                    return;
+                }
+
+                this.loadBookingsForUser(currentUserId);
+            }
+
+            loadBookingsForUser(userId) {
+                console.log('Loading bookings for user ID:', userId);
+                // Load user's event requests from API using user-specific endpoint
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', `/api/user-requirements/user/${userId}`, true);
+                xhr.setRequestHeader('Accept', 'application/json');
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            this.bookings = JSON.parse(xhr.responseText);
+                            console.log('Loaded bookings for user:', userId, this.bookings);
+                            this.displayBookings();
+                        } catch (error) {
+                            console.error('JSON parsing error:', error);
+                            this.bookings = [];
+                            this.displayBookings();
+                        }
+                    } else {
+                        console.error('Failed to load bookings:', xhr.status, xhr.responseText);
+                        this.bookings = [];
+                        this.displayBookings();
+                    }
+                };
+
+                xhr.onerror = () => {
+                    console.error('Network error loading bookings');
+                    this.bookings = [];
+                    this.displayBookings();
+                };
+
+                xhr.send();
+            }
+
+            loadAllBookingsForDebugging() {
+                console.log('Loading all bookings for debugging...');
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/user-requirements', true);
+                xhr.setRequestHeader('Accept', 'application/json');
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const allBookings = JSON.parse(xhr.responseText);
+                            console.log('All bookings in database:', allBookings);
+                            
+                            // Show all bookings temporarily for debugging
+                            this.bookings = allBookings;
+                            this.displayBookings();
+                        } catch (error) {
+                            console.error('JSON parsing error:', error);
+                            this.bookings = [];
+                            this.displayBookings();
+                        }
+                    } else {
+                        console.error('Failed to load all bookings:', xhr.status);
+                        this.bookings = [];
+                        this.displayBookings();
+                    }
+                };
+
+                xhr.onerror = () => {
+                    console.error('Network error loading all bookings');
+                    this.bookings = [];
+                    this.displayBookings();
+                };
+
+                xhr.send();
+            }
+
+            displayBookings() {
+                const container = document.getElementById('bookingsContainer');
+                
+                if (this.bookings.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-bookings">
+                            <i class="fas fa-calendar-plus fa-3x mb-3 text-primary"></i>
+                            <h5>Welcome to Nadchathra Mahal!</h5>
+                            <p class="mb-4">You haven't created any event bookings yet. Start by creating your first booking or give feedback on a completed event.</p>
+                            <div class="d-flex gap-3 justify-content-center">
+                                <button class="btn btn-primary btn-lg" onclick="createNewBooking()">
+                                    <i class="fas fa-plus me-2"></i>Create New Booking
+                                </button>
+                                <button class="btn btn-outline-info btn-lg" onclick="giveFeedback()">
+                                    <i class="fas fa-comment me-2"></i>Give Feedback
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                this.bookings.forEach(booking => {
+                    const statusClass = this.getApprovalStatusClass(booking.approvalStatus);
+                    const statusIcon = this.getApprovalStatusIcon(booking.approvalStatus);
+                    
+                    html += `
+                        <div class="status-card ${statusClass}">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h5><i class="fas fa-calendar me-2"></i>${booking.eventType} Event</h5>
+                                    <p class="mb-1"><strong>Date:</strong> ${this.formatDate(booking.eventDate)}</p>
+                                    <p class="mb-1"><strong>Guests:</strong> ${booking.guestCount}</p>
+                                    <p class="mb-1"><strong>Budget:</strong> ${booking.budget}</p>
+                                    <p class="mb-1"><strong>Cuisine:</strong> ${booking.cuisineType || 'Not specified'}</p>
+                                    <p class="mb-0"><strong>Status:</strong> ${statusIcon} ${booking.approvalStatus || 'PENDING'}</p>
+                                    ${this.getPaymentStatusDisplay(booking)}
+                                    ${booking.rejectionReason ? `<p class="mb-0 text-danger"><strong>Reason:</strong> ${booking.rejectionReason}</p>` : ''}
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    ${this.getActionButtons(booking)}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            }
+
+            getStatusClass(status) {
+                switch (status) {
+                    case 'PENDING': return 'status-pending';
+                    case 'APPROVED': return 'status-approved';
+                    case 'REJECTED': return 'status-rejected';
+                    default: return 'status-pending';
+                }
+            }
+
+            getStatusIcon(status) {
+                switch (status) {
+                    case 'PENDING': return '<i class="fas fa-clock text-warning"></i>';
+                    case 'APPROVED': return '<i class="fas fa-check-circle text-success"></i>';
+                    case 'REJECTED': return '<i class="fas fa-times-circle text-danger"></i>';
+                    default: return '<i class="fas fa-question-circle text-muted"></i>';
+                }
+            }
+
+            getApprovalStatusClass(status) {
+                switch (status) {
+                    case 'PENDING': return 'status-pending';
+                    case 'APPROVED': return 'status-approved';
+                    case 'REJECTED': return 'status-rejected';
+                    default: return 'status-pending';
+                }
+            }
+
+            getApprovalStatusIcon(status) {
+                switch (status) {
+                    case 'PENDING': return '<i class="fas fa-clock text-warning"></i>';
+                    case 'APPROVED': return '<i class="fas fa-check-circle text-success"></i>';
+                    case 'REJECTED': return '<i class="fas fa-times-circle text-danger"></i>';
+                    default: return '<i class="fas fa-question-circle text-muted"></i>';
+                }
+            }
+
+            getPaymentStatusDisplay(booking) {
+                const paymentStatus = booking.paymentStatus || 'PENDING';
+                const approvalStatus = booking.approvalStatus || 'PENDING';
+                
+                // Only show payment status if booking is approved
+                if (approvalStatus !== 'APPROVED') {
+                    return '';
+                }
+                
+                switch (paymentStatus) {
+                    case 'COMPLETED':
+                        return `
+                            <div class="alert alert-success py-2 px-3 mt-2 mb-0">
+                                <i class="fas fa-check-circle me-1"></i>
+                                <strong>Payment Completed!</strong> Your payment has been processed successfully.
+                                ${booking.transactionId ? `<br><small>Transaction ID: ${booking.transactionId}</small>` : ''}
+                            </div>
+                        `;
+                    case 'FAILED':
+                        return `
+                            <div class="alert alert-danger py-2 px-3 mt-2 mb-0">
+                                <i class="fas fa-exclamation-circle me-1"></i>
+                                <strong>Payment Failed!</strong> Please try again or contact support.
+                            </div>
+                        `;
+                    case 'PENDING':
+                    default:
+                        return `
+                            <div class="alert alert-warning py-2 px-3 mt-2 mb-0">
+                                <i class="fas fa-credit-card me-1"></i>
+                                <strong>Payment Required</strong> - Please complete your payment to proceed
+                            </div>
+                        `;
+                }
+            }
+
+            getActionButtons(booking) {
+                let buttons = '';
+                const approvalStatus = booking.approvalStatus || 'PENDING';
+                const paymentStatus = booking.paymentStatus || 'PENDING';
+                
+                if (approvalStatus === 'PENDING') {
+                    buttons += `
+                        <button class="btn btn-outline-warning btn-sm me-2" onclick="viewBookingDetails(${booking.id})">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <small class="text-muted d-block mt-1">Waiting for admin approval</small>
+                    `;
+                } else if (approvalStatus === 'APPROVED') {
+                    if (paymentStatus === 'COMPLETED') {
+                        buttons += `
+                            <button class="btn btn-success btn-sm me-2" disabled>
+                                <i class="fas fa-check-circle"></i> Payment Completed
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm me-2" onclick="viewBookingDetails(${booking.id})">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                            <button class="btn btn-outline-info btn-sm" onclick="giveFeedback(${booking.id})">
+                                <i class="fas fa-comment"></i> Give Feedback
+                            </button>
+                        `;
+                    } else if (paymentStatus === 'FAILED') {
+                        buttons += `
+                            <button class="btn btn-danger btn-sm me-2" onclick="proceedToPayment(${booking.id})">
+                                <i class="fas fa-redo"></i> Retry Payment
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm me-2" onclick="viewBookingDetails(${booking.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        `;
+                    } else {
+                        buttons += `
+                            <button class="btn btn-primary btn-sm me-2" onclick="proceedToPayment(${booking.id})">
+                                <i class="fas fa-credit-card"></i> Pay Now
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm me-2" onclick="viewBookingDetails(${booking.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        `;
+                    }
+                } else if (approvalStatus === 'REJECTED') {
+                    buttons += `
+                        <button class="btn btn-outline-secondary btn-sm me-2" onclick="createNewBooking()">
+                            <i class="fas fa-plus"></i> New Booking
+                        </button>
+                        <small class="text-danger d-block mt-1">Request rejected</small>
+                    `;
+                }
+                
+                return buttons;
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+
+            initializeStarRating() {
+                const stars = document.querySelectorAll('.star');
+                stars.forEach((star, index) => {
+                    star.addEventListener('click', () => {
+                        this.selectRating(index + 1);
+                    });
+                    star.addEventListener('mouseenter', () => {
+                        this.highlightStars(index + 1);
+                    });
+                });
+
+                const starContainer = document.querySelector('.star-rating');
+                starContainer.addEventListener('mouseleave', () => {
+                    this.highlightStars(this.selectedRating);
+                });
+            }
+
+            selectRating(rating) {
+                this.selectedRating = rating;
+                this.highlightStars(rating);
+            }
+
+            highlightStars(rating) {
+                const stars = document.querySelectorAll('.star');
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+            }
+
+            async submitFeedback() {
+                if (this.selectedRating === 0) {
+                    this.showFeedbackMessage('Please select a rating first!', 'warning');
+                    return;
+                }
+
+                const userId = sessionStorage.getItem('userId');
+                if (!userId) {
+                    this.showFeedbackMessage('User not found. Please login again.', 'danger');
+                    return;
+                }
+
+                const submitBtn = document.getElementById('submitFeedbackBtn');
+                const originalText = submitBtn.innerHTML;
+                
+                try {
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Submitting...';
+                    submitBtn.disabled = true;
+
+                    const response = await fetch('/api/user-feedback', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            userId: parseInt(userId),
+                            rating: this.selectedRating
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.showFeedbackMessage('Thank you for your feedback!', 'success');
+                        this.selectedRating = 0;
+                        this.highlightStars(0);
+                    } else {
+                        this.showFeedbackMessage(result.message || 'Failed to submit feedback', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error submitting feedback:', error);
+                    this.showFeedbackMessage('Network error. Please try again.', 'danger');
+                } finally {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+
+            showFeedbackMessage(message, type) {
+                const messageDiv = document.getElementById('feedbackMessage');
+                messageDiv.innerHTML = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                
+                // Auto-dismiss after 3 seconds
+                setTimeout(() => {
+                    const alert = messageDiv.querySelector('.alert');
+                    if (alert) {
+                        alert.remove();
+                    }
+                }, 3000);
+            }
+        }
+
+        // Global functions
+        function createNewBooking() {
+            window.location.href = '/user-requirement.html';
+        }
+
+        function viewBookingDetails(bookingId) {
+            alert(`Viewing details for booking ID: ${bookingId}`);
+        }
+
+        function proceedToPayment(bookingId) {
+            // Store booking ID for payment
+            sessionStorage.setItem('currentBookingId', bookingId);
+            window.location.href = '/payment.html';
+        }
+
+        function giveFeedback(bookingId) {
+            // Scroll to feedback section instead of going to separate page
+            document.querySelector('.rating-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function submitFeedback() {
+            if (window.userDashboard) {
+                userDashboard.submitFeedback();
+            }
+        }
+
+        // Function to refresh dashboard after payment completion
+        function refreshAfterPayment() {
+            // Check if we just completed a payment
+            const paymentCompleted = sessionStorage.getItem('paymentCompleted');
+            if (paymentCompleted === 'true') {
+                // Clear the flag
+                sessionStorage.removeItem('paymentCompleted');
+                // Show success message
+                showPaymentSuccessMessage();
+                // Refresh the bookings
+                userDashboard.loadBookingsFromAPI();
+            }
+        }
+
+        function showPaymentSuccessMessage() {
+            // Create a success alert
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>Payment Completed!</strong> Your payment has been processed successfully. 
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            // Insert at the top of the bookings container
+            const container = document.getElementById('bookingsContainer');
+            container.insertBefore(alertDiv, container.firstChild);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        function viewBookingDetails(bookingId) {
+            // In a real app, this would show a modal or navigate to a details page
+            alert(`Viewing details for booking ${bookingId}`);
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            alert('Logged out successfully.');
+            window.location.href = '/login.html';
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            window.userDashboard = new UserDashboard();
+            window.userDashboard.init();
+            // Check for payment completion
+            refreshAfterPayment();
+        });
+    </script>
+</body>
+</html>

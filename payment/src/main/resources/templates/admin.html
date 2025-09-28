@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard - Nadchathra Mahal</title>
+    <style>
+        body { font-family: "Segoe UI", Tahoma, sans-serif; margin: 0; background: #f0f2f5; color: #333; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 20px; }
+
+        /* Header */
+        .header { background: linear-gradient(90deg, #2c3e50, #34495e); color: white; padding: 25px; border-radius: 10px; margin-bottom: 25px; animation: fadeIn 1s ease-in; }
+        .header h1 { margin: 0; font-size: 26px; }
+        .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+
+        /* Stats */
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; animation: slideUp 0.8s ease; }
+        .stat-card:hover { transform: translateY(-6px); box-shadow: 0 8px 18px rgba(0,0,0,0.12); }
+        .stat-number { font-size: 2em; font-weight: bold; color: #2c3e50; margin: 10px 0; }
+        .stat-label { font-size: 0.9em; color: #555; }
+        .stat-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+
+        /* Section */
+        .section { background: white; margin-bottom: 25px; padding: 20px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); animation: fadeIn 1s ease; }
+        .section h3 { color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; font-size: 18px; }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; animation: fadeIn 1s ease; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+        th { background-color: #f8f9fa; font-weight: 600; color: #2c3e50; position: sticky; top: 0; z-index: 2; }
+        tr:nth-child(even) { background: #fafafa; }
+        tr { transition: background 0.3s ease; }
+        tr:hover { background: #eaf3ff; }
+
+        /* Buttons */
+        .btn { background: #3498db; color: white; padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; margin: 2px; transition: all 0.25s ease; }
+        .btn:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .btn-danger { background: #e74c3c; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-success { background: #27ae60; }
+        .btn-success:hover { background: #1e8449; }
+
+        /* Status Badges */
+        .badge { padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 12px; }
+        .status-pending { background: #fef5e7; color: #d68910; }
+        .status-confirmed { background: #eafaf1; color: #27ae60; }
+        .status-cancelled { background: #fdecea; color: #c0392b; }
+
+        /* Search Box */
+        .search-box { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; font-size: 14px; transition: border 0.3s ease; }
+        .search-box:focus { border-color: #3498db; outline: none; box-shadow: 0 0 6px rgba(52,152,219,0.4); }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 10px; width: 350px; text-align: center; animation: slideDown 0.5s ease; }
+        .modal-buttons { margin-top: 15px; }
+
+        /* Animations */
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+        @keyframes slideUp { from {transform: translateY(30px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+        @keyframes slideDown { from {transform: translateY(-40px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🏛️ Nadchathra Mahal - Admin Dashboard</h1>
+        <p>View customer bookings, food selections, and feedback (Read-Only)</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+        <div class="stat-card">
+            <span class="stat-icon">📅</span>
+            <div class="stat-number" id="totalBookings">0</div>
+            <div class="stat-label">Total Bookings</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">💬</span>
+            <div class="stat-number" id="totalFeedback">0</div>
+            <div class="stat-label">Customer Feedback</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">⭐</span>
+            <div class="stat-number" id="avgRating">0.0</div>
+            <div class="stat-label">Average Rating</div>
+        </div>
+    </div>
+
+    <!-- Bookings -->
+    <div class="section">
+        <h3>📅 Recent Bookings</h3>
+        <input type="text" class="search-box" id="bookingSearch" placeholder="Search bookings...">
+        <table id="bookingsTable">
+            <thead>
+            <tr>
+                <th>ID</th><th>Customer</th><th>Event</th><th>Hall</th><th>Date</th><th>Guests</th><th>Total</th><th>Status</th><th>Type</th>
+            </tr>
+            </thead>
+            <tbody id="bookingsBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Feedback -->
+    <div class="section">
+        <h3>💬 Customer Feedback</h3>
+        <input type="text" class="search-box" id="feedbackSearch" placeholder="Search feedback...">
+        <table id="feedbackTable">
+            <thead>
+            <tr>
+                <th>ID</th><th>Customer</th><th>Rating</th><th>Category</th><th>Comments</th><th>Date</th>
+            </tr>
+            </thead>
+            <tbody id="feedbackBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Food Selections by Booking -->
+    <div class="section">
+        <h3>🍽️ Food Selections by Booking</h3>
+        <table id="foodTable">
+            <thead>
+            <tr>
+                <th>Booking ID</th><th>Customer</th><th>Event</th><th>Selected Food Items</th><th>Total Price</th>
+            </tr>
+            </thead>
+            <tbody id="foodBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Actions -->
+    <div class="section">
+        <h3>🔧 Quick Actions</h3>
+        <a href="/dashboard" class="btn">🏠 Dashboard</a>
+        <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+        <button onclick="refreshData()" class="btn btn-success">🔄 Refresh</button>
+        <button onclick="exportData()" class="btn">📊 Export</button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="confirmModal">
+    <div class="modal-content">
+        <p id="modalMessage">Are you sure?</p>
+        <div class="modal-buttons">
+            <button class="btn btn-success" id="confirmYes">Yes</button>
+            <button class="btn btn-danger" id="confirmNo">No</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let confirmCallback = null;
+
+    function showModal(message, callback) {
+        document.getElementById("modalMessage").textContent = message;
+        document.getElementById("confirmModal").style.display = "flex";
+        confirmCallback = callback;
+    }
+    document.getElementById("confirmYes").onclick = function() {
+        document.getElementById("confirmModal").style.display = "none";
+        if (confirmCallback) confirmCallback(true);
+    };
+    document.getElementById("confirmNo").onclick = function() {
+        document.getElementById("confirmModal").style.display = "none";
+        if (confirmCallback) confirmCallback(false);
+    };
+
+    // Count-up animation
+    function animateCount(id, target) {
+        const el = document.getElementById(id);
+        let start = 0;
+        const step = Math.ceil(target / 50);
+        const interval = setInterval(() => {
+            start += step;
+            if (start >= target) {
+                start = target;
+                clearInterval(interval);
+            }
+            el.textContent = start;
+        }, 20);
+    }
+
+    // Load all data on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadStatistics();
+        loadBookings();
+        loadFeedback();
+        loadFood();
+        setupSearch();
+    });
+
+    // Load statistics with count-up animation
+    async function loadStatistics() {
+        try {
+            const [bookingsRes, feedbackRes] = await Promise.all([
+                fetch('/api/bookings/all'),
+                fetch('/api/feedback/all')
+            ]);
+            const bookings = await bookingsRes.json();
+            const feedback = await feedbackRes.json();
+
+            const totalBookings = bookings.length;
+            const totalFeedback = feedback.length;
+            const avgRating = feedback.length > 0 ?
+                (feedback.reduce((sum, f) => sum + f.rating, 0) / feedback.length).toFixed(1) : 0;
+
+            animateCount("totalBookings", totalBookings);
+            animateCount("totalFeedback", totalFeedback);
+            document.getElementById("avgRating").textContent = avgRating;
+        } catch (err) {
+            console.error("Error loading stats", err);
+        }
+    }
+
+    // Load bookings data
+    async function loadBookings() {
+        try {
+            const response = await fetch('/api/bookings/all');
+            const bookings = await response.json();
+            currentBookings = bookings; // Store for editing
+            const tbody = document.getElementById('bookingsBody');
+            tbody.innerHTML = '';
+
+            bookings.forEach(booking => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${booking.bookingId}</td>
+                    <td>${booking.customerName}</td>
+                    <td>${booking.eventName}</td>
+                    <td>${booking.hall}</td>
+                    <td>${new Date(booking.eventDate).toLocaleDateString()}</td>
+                    <td>${booking.expectedGuests}</td>
+                    <td>₹${booking.totalPrice || 0}</td>
+                    <td><span class="badge status-${booking.status.toLowerCase()}">${booking.status}</span></td>
+                    <td>
+                        <span style="color: #666; font-size: 12px;">View Only</span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        } catch (err) {
+            console.error("Error loading bookings", err);
+        }
+    }
+
+    // Load feedback data
+    async function loadFeedback() {
+        try {
+            const response = await fetch('/api/feedback/all');
+            const feedback = await response.json();
+            const tbody = document.getElementById('feedbackBody');
+            tbody.innerHTML = '';
+
+            feedback.forEach(fb => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${fb.feedbackId}</td>
+                    <td>${fb.customerName}</td>
+                    <td>${'⭐'.repeat(fb.rating)}</td>
+                    <td>${fb.category || 'General'}</td>
+                    <td>${fb.comments || 'No comments'}</td>
+                    <td>${new Date(fb.createdAt).toLocaleDateString()}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        } catch (err) {
+            console.error("Error loading feedback", err);
+        }
+    }
+
+    // Load food selections by booking
+    async function loadFood() {
+        try {
+            const response = await fetch('/api/bookings/all');
+            const bookings = await response.json();
+            const tbody = document.getElementById('foodBody');
+            tbody.innerHTML = '';
+
+            bookings.forEach(booking => {
+                const foodItems = booking.foodItems || [];
+                const foodNames = foodItems.map(food => food.foodName || food).join(', ') || 'No food selected';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${booking.bookingId}</td>
+                    <td>${booking.customerName}</td>
+                    <td>${booking.eventName}</td>
+                    <td>${foodNames}</td>
+                    <td>₹${booking.totalPrice || 0}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        } catch (err) {
+            console.error("Error loading food selections", err);
+        }
+    }
+
+    // Admin page is read-only - no update functions needed
+
+    // Setup search functionality
+    function setupSearch() {
+        const bookingSearch = document.getElementById('bookingSearch');
+        const feedbackSearch = document.getElementById('feedbackSearch');
+
+        bookingSearch.addEventListener('input', function() {
+            filterTable('bookingsTable', this.value);
+        });
+
+        feedbackSearch.addEventListener('input', function() {
+            filterTable('feedbackTable', this.value);
+        });
+    }
+
+    // Filter table rows
+    function filterTable(tableId, searchTerm) {
+        const table = document.getElementById(tableId);
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchTerm.toLowerCase())) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    }
+
+    // Refresh all data
+    function refreshData() {
+        loadStatistics();
+        loadBookings();
+        loadFeedback();
+        loadFood();
+        showNotification('Data refreshed successfully!', 'success');
+    }
+
+    // Export data (placeholder)
+    function exportData() {
+        showNotification('Export functionality coming soon!', 'info');
+    }
+
+    // Store current bookings for display
+    let currentBookings = [];
+
+
+    // Show notification
+    function showNotification(message, type) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        `;
+        
+        const colors = {
+            success: '#27ae60',
+            error: '#e74c3c',
+            info: '#3498db'
+        };
+        
+        notification.style.backgroundColor = colors[type] || colors.info;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    // Add CSS for switch and animations
+    const style = document.createElement('style');
+    style.textContent = `
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #27ae60;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+</body>
+</html>
