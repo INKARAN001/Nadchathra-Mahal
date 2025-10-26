@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .booking-detail-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        
+        .booking-detail-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .booking-id {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+        
+        .detail-section h3 {
+            color: #374151;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .detail-value {
+            color: #6b7280;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn-edit {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-cancel {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        .btn-cancel:hover {
+            background-color: #dc2626;
+        }
+        
+        .status-card {
+            background: #f0f9ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-card.pending {
+            background: #fef3c7;
+            border-color: #fde047;
+        }
+        
+        .status-card.accepted {
+            background: #dcfce7;
+            border-color: #86efac;
+        }
+        
+        .status-card.rejected {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+        
+        .cancel-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cancel-modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/user/dashboard}">Dashboard</a>
+                <a th:href="@{/user/profile}">My Profile</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="booking-detail-container">
+        <div class="booking-detail-card">
+            <div class="booking-header">
+                <div>
+                    <h2>Booking Details</h2>
+                    <p class="booking-id">Booking ID: #<span th:text="${booking.id}"></span></p>
+                </div>
+                <div>
+                    <span class="badge" 
+                          th:classappend="${booking.bookingDetails.bookingStatus == 'PENDING' ? 'badge-pending' : 
+                                          booking.bookingDetails.bookingStatus == 'ACCEPTED' ? 'badge-accepted' : 
+                                          booking.bookingDetails.bookingStatus == 'REJECTED' ? 'badge-rejected' : 
+                                          'badge-paid'}"
+                          th:text="${booking.bookingDetails.bookingStatus}"></span>
+                </div>
+            </div>
+
+            <!-- Status Information -->
+            <div th:if="${booking.bookingDetails.bookingStatus == 'PENDING'}" class="status-card pending">
+                <strong>⏳ Pending Confirmation</strong>
+                <p style="margin: 0.5rem 0 0 0;">Your booking is awaiting admin approval. You can edit or cancel it before confirmation.</p>
+            </div>
+
+            <div th:if="${booking.bookingDetails.bookingStatus == 'ACCEPTED'}" class="status-card accepted">
+                <strong>✅ Booking Accepted</strong>
+                <p style="margin: 0.5rem 0 0 0;">Your booking has been confirmed! Please proceed with payment.</p>
+            </div>
+
+            <div th:if="${booking.bookingDetails.bookingStatus == 'REJECTED'}" class="status-card rejected">
+                <strong>❌ Booking Rejected</strong>
+                <p style="margin: 0.5rem 0 0 0;">Unfortunately, your booking request was not approved. Please contact us for more information.</p>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="detail-section">
+                <h3>📋 Personal Information</h3>
+                <div class="detail-grid">
+                    <div class="detail-label">Full Name:</div>
+                    <div class="detail-value" th:text="${booking.fullName}"></div>
+
+                    <div class="detail-label">Email:</div>
+                    <div class="detail-value" th:text="${booking.emailAddress}"></div>
+
+                    <div class="detail-label">Phone:</div>
+                    <div class="detail-value" th:text="${booking.phoneNumber}"></div>
+                </div>
+            </div>
+
+            <!-- Event Details -->
+            <div class="detail-section">
+                <h3>🏛️ Event Details</h3>
+                <div class="detail-grid">
+                    <div class="detail-label">Hall:</div>
+                    <div class="detail-value" th:text="${booking.hall}"></div>
+
+                    <div class="detail-label">Event Date:</div>
+                    <div class="detail-value" th:text="${#temporals.format(booking.bookingDate, 'EEEE, MMMM dd, yyyy')}"></div>
+
+                    <div class="detail-label">Number of Guests:</div>
+                    <div class="detail-value" th:text="${booking.bookingDetails.peopleCount} + ' people'"></div>
+                </div>
+            </div>
+
+            <!-- Food & Payment -->
+            <div class="detail-section">
+                <h3>🍽️ Food & Payment Details</h3>
+                <div class="detail-grid">
+                    <div class="detail-label">Food Type:</div>
+                    <div class="detail-value" th:text="${booking.bookingDetails.foodType}"></div>
+
+                    <div class="detail-label">Total Amount:</div>
+                    <div class="detail-value">
+                        <strong style="font-size: 1.2rem; color: #1f2937;">
+                            ₹<span th:text="${#numbers.formatDecimal(booking.bookingDetails.totalAmount, 0, 'COMMA', 2, 'POINT')}"></span>
+                        </strong>
+                    </div>
+
+                    <div class="detail-label">Payment Type:</div>
+                    <div class="detail-value" th:text="${booking.bookingDetails.paymentType}"></div>
+
+                    <div class="detail-label">Payment Status:</div>
+                    <div class="detail-value">
+                        <span class="badge" 
+                              th:classappend="${booking.bookingDetails.paymentStatus == 'PAID' ? 'badge-paid' : 'badge-pending'}"
+                              th:text="${booking.bookingDetails.paymentStatus}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a th:href="@{/user/dashboard}" class="btn btn-secondary">← Back to Dashboard</a>
+                
+                <div style="flex: 1;"></div>
+                
+                <a th:if="${canEdit}" 
+                   th:href="@{/user/booking/edit/{id}(id=${booking.id})}" 
+                   class="btn btn-edit">
+                    ✏️ Edit Booking
+                </a>
+                
+                <button th:if="${canEdit}" 
+                        class="btn btn-cancel" 
+                        onclick="showCancelModal()">
+                    🗑️ Cancel Booking
+                </button>
+                
+                <a th:if="${booking.bookingDetails.bookingStatus == 'ACCEPTED' && booking.bookingDetails.paymentStatus == 'PENDING' && booking.bookingDetails.paymentType == 'CARD'}" 
+                   th:href="@{/user/booking/payment-gateway/{id}(id=${booking.id})}" 
+                   class="btn btn-primary">
+                    💳 Pay Now
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal -->
+    <div id="cancelModal" class="cancel-modal">
+        <div class="modal-content">
+            <h3 style="color: #991b1b; margin-bottom: 1rem;">⚠️ Cancel Booking?</h3>
+            <p>Are you sure you want to cancel this booking? This action cannot be undone.</p>
+            
+            <form th:action="@{/user/booking/cancel/{id}(id=${booking.id})}" method="post">
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideCancelModal()">No, Keep It</button>
+                    <button type="submit" class="btn btn-cancel">Yes, Cancel Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function showCancelModal() {
+            document.getElementById('cancelModal').classList.add('active');
+        }
+
+        function hideCancelModal() {
+            document.getElementById('cancelModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('cancelModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideCancelModal();
+            }
+        });
+    </script>
+</body>
+</html>
+
