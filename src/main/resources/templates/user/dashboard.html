@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- DEVELOPER: AKASH - User Dashboard & Booking Interface -->
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/user/profile}">My Profile</a>
+                <span>Welcome, <span th:text="${user.name}"></span></span>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div>
+                    <h2>My Dashboard</h2>
+                    <p>View and manage your bookings</p>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <a th:href="@{/user/messages}" class="btn btn-secondary">
+                        📬 Messages 
+                        <span th:if="${unreadCount > 0}" style="background: #ef4444; color: white; padding: 0.2rem 0.5rem; border-radius: 50%; font-size: 0.75rem; margin-left: 0.25rem;" th:text="${unreadCount}"></span>
+                    </a>
+                    <a th:href="@{/user/profile}" class="btn btn-primary">👤 My Profile</a>
+                    <a th:href="@{/user/booking/stage1}" class="btn btn-primary">📅 Book Now</a>
+                    <a th:href="@{/user/feedback}" class="btn btn-secondary">💬 Give Feedback</a>
+                </div>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div th:if="${info}" class="alert alert-success">
+                <span th:text="${info}"></span>
+            </div>
+
+            <!-- Broadcast Messages as Alerts -->
+            <div th:each="message : ${broadcastMessages}">
+                <div class="alert alert-info" style="background: #f0f9ff; border-color: #0ea5e9; color: #0c4a6e; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                        <div style="font-size: 1.25rem;">📢</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; margin-bottom: 0.25rem;" th:text="${message.subject}"></div>
+                            <div style="font-size: 0.9rem; line-height: 1.4;" th:text="${message.content}"></div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem;">
+                                From: <span th:text="${message.sender.name}"></span> • 
+                                <span th:text="${#temporals.format(message.createdAt, 'MMM dd, yyyy HH:mm')}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Message Notification -->
+            <div th:if="${unreadCount > 0}" class="alert alert-info" style="background: #dbeafe; border-color: #3b82f6; color: #1e40af; margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>📬 You have <span th:text="${unreadCount}"></span> unread personal message(s)</strong>
+                        <p style="margin: 0.5rem 0 0 0;">Click the Messages button to view them.</p>
+                    </div>
+                    <a th:href="@{/user/messages}" class="btn btn-primary">View Messages</a>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>My Bookings</h3>
+                
+                <div th:if="${bookings.isEmpty()}" style="text-align: center; padding: 3rem; color: #6b7280;">
+                    <p style="font-size: 1.1rem;">No bookings yet. Click "Book Now" to make your first booking!</p>
+                </div>
+
+                <div class="table-container" th:if="${!bookings.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Hall</th>
+                                <th>Date</th>
+                                <th>Food Type</th>
+                                <th>Guests</th>
+                                <th>Amount</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="booking : ${bookings}">
+                                <td th:text="${booking.hall}"></td>
+                                <td th:text="${#temporals.format(booking.bookingDate, 'dd MMM yyyy')}"></td>
+                                <td th:text="${booking.bookingDetails.foodType}"></td>
+                                <td th:text="${booking.bookingDetails.peopleCount}"></td>
+                                <td>₹<span th:text="${#numbers.formatDecimal(booking.bookingDetails.totalAmount, 0, 'COMMA', 2, 'POINT')}"></span></td>
+                                <td>
+                                    <div th:text="${booking.bookingDetails.paymentType}"></div>
+                                    <span class="badge" 
+                                          th:classappend="${booking.bookingDetails.paymentStatus == 'PAID' ? 'badge-paid' : 'badge-pending'}"
+                                          th:text="${booking.bookingDetails.paymentStatus}"></span>
+                                </td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${booking.bookingDetails.bookingStatus == 'PENDING' ? 'badge-pending' : 
+                                                          booking.bookingDetails.bookingStatus == 'ACCEPTED' ? 'badge-accepted' : 
+                                                          booking.bookingDetails.bookingStatus == 'REJECTED' ? 'badge-rejected' : 
+                                                          'badge-paid'}"
+                                          th:text="${booking.bookingDetails.bookingStatus}"></span>
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                        <a th:href="@{/user/booking/view/{id}(id=${booking.id})}" 
+                                           class="btn btn-secondary btn-small" 
+                                           title="View Details">
+                                            👁️ View
+                                        </a>
+                                        
+                                        <a th:if="${booking.bookingDetails.bookingStatus == 'PENDING'}" 
+                                           th:href="@{/user/booking/edit/{id}(id=${booking.id})}" 
+                                           class="btn btn-primary btn-small" 
+                                           title="Edit Booking">
+                                            ✏️ Edit
+                                        </a>
+                                        
+                                        <a th:if="${booking.bookingDetails.bookingStatus == 'ACCEPTED' && booking.bookingDetails.paymentStatus == 'PENDING' && booking.bookingDetails.paymentType == 'CARD'}" 
+                                           th:href="@{/user/booking/payment-gateway/{id}(id=${booking.id})}" 
+                                           class="btn btn-primary btn-small">
+                                            💳 Pay
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+
