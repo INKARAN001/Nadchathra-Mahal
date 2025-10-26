@@ -5,6 +5,10 @@ import lombok.*;
 
 import java.util.List;
 
+/**
+ * DEVELOPER: JADAVAN
+ * CRUD: User Entity - Core User Management
+ */
 @Entity
 @Table(name = "users")
 @Data
@@ -32,7 +36,14 @@ public class User {
     private String role; // USER or ADMIN
     
     @Column(name = "enabled")
-    private Boolean enabled = true; // Account status (active/inactive)
+    private Boolean enabled;
+    
+    @PrePersist
+    protected void onCreate() {
+        if (enabled == null) {
+            enabled = true;
+        }
+    }
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Booking> bookings;
