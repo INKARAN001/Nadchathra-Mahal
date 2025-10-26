@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Message - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .form-container {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .form-group select {
+            background: white;
+        }
+        .message-info {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        .info-value {
+            color: #6b7280;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Dashboard</a>
+                <a th:href="@{/admin/users}" class="btn btn-secondary">Manage Users</a>
+                <a th:href="@{/admin/feedbacks}" class="btn btn-secondary">Manage Feedbacks</a>
+                <a th:href="@{/admin/messages}" class="btn btn-secondary">Messages</a>
+                <a th:href="@{/admin/messages/send}" class="btn btn-primary">Send Message</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>Edit Message</h2>
+                <p>Update the content of this message</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="form-container">
+                <!-- Message Information (Read-only) -->
+                <div class="message-info">
+                    <h4 style="margin-bottom: 1rem; color: #374151;">Message Information</h4>
+                    <div class="info-item">
+                        <span class="info-label">Message Type:</span>
+                        <span class="info-value" th:text="${message.messageType}"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">From:</span>
+                        <span class="info-value" th:text="${message.sender.name}"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">To:</span>
+                        <span class="info-value" th:if="${message.recipient != null}" th:text="${message.recipient.name}"></span>
+                        <span class="info-value" th:if="${message.recipient == null}">All Users</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Created:</span>
+                        <span class="info-value" th:text="${#temporals.format(message.createdAt, 'MMM dd, yyyy HH:mm')}"></span>
+                    </div>
+                </div>
+
+                <!-- Edit Form -->
+                <form th:action="@{/admin/messages/update/{id}(id=${message.id})}" method="post">
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        <input type="text" 
+                               id="subject" 
+                               name="subject" 
+                               th:value="${message.subject}"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">Content *</label>
+                        <textarea id="content" 
+                                  name="content" 
+                                  th:text="${message.content}"
+                                  required></textarea>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a th:href="@{/admin/messages}" class="btn btn-secondary">← Cancel</a>
+                        <a th:href="@{/admin/messages/view/{id}(id=${message.id})}" class="btn btn-secondary">👁️ View Message</a>
+                        <button type="submit" class="btn btn-primary">💾 Update Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
