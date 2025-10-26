@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- DEVELOPER: SRIKARSAN - Manager Dashboard & Management Interface -->
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/manager/dashboard}">NADCHATHRA MAHAL - Manager</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/manager/dashboard}">Dashboard</a>
+                <a th:href="@{/manager/halls}">Halls</a>
+                <a th:href="@{/manager/foods}">Foods</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <h2>Manager Dashboard</h2>
+            <p>Manage halls, food items, and pricing</p>
+
+            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 2rem 0;">
+                <div class="stat-card" style="background: #dbeafe; padding: 2rem; border-radius: 8px;">
+                    <h3>🏛️ Halls</h3>
+                    <p style="font-size: 2rem; font-weight: bold;" th:text="${hallCount}">0</p>
+                    <a th:href="@{/manager/halls}" class="btn btn-primary">Manage Halls</a>
+                </div>
+
+                <div class="stat-card" style="background: #fef3c7; padding: 2rem; border-radius: 8px;">
+                    <h3>🍽️ Food Items</h3>
+                    <p style="font-size: 2rem; font-weight: bold;" th:text="${foodCount}">0</p>
+                    <a th:href="@{/manager/foods}" class="btn btn-primary">Manage Foods</a>
+                </div>
+            </div>
+
+            <div class="quick-actions" style="margin: 2rem 0;">
+                <h3>Quick Actions</h3>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <a th:href="@{/manager/halls/new}" class="btn btn-primary">➕ Add New Hall</a>
+                    <a th:href="@{/manager/foods/new}" class="btn btn-primary">➕ Add New Food Item</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+
