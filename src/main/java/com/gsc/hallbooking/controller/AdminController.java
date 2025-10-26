@@ -2,15 +2,21 @@ package com.gsc.hallbooking.controller;
 
 import com.gsc.hallbooking.service.BookingService;
 import com.gsc.hallbooking.service.FeedbackService;
+import com.gsc.hallbooking.service.MessageService;
 import com.gsc.hallbooking.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
+/**
+ * DEVELOPER: INKARAN
+ * CRUD: Admin Dashboard & Management System
+ */
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
@@ -19,6 +25,7 @@ public class AdminController {
     private final BookingService bookingService;
     private final FeedbackService feedbackService;
     private final UserService userService;
+    private final MessageService messageService;
     
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
@@ -105,6 +112,113 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/admin/users";
+    }
+    
+    // ========== MESSAGING SYSTEM ==========
+    
+    @GetMapping("/messages")
+    public String messages(Model model) {
+        model.addAttribute("users", messageService.getAllUsers());
+        model.addAttribute("messages", messageService.getAllMessages());
+        return "admin/messages";
+    }
+    
+    @GetMapping("/messages/send")
+    public String sendMessageForm(Model model) {
+        model.addAttribute("users", messageService.getAllUsers());
+        return "admin/send-message";
+    }
+    
+    @PostMapping("/messages/send-broadcast")
+    public String sendBroadcastMessage(@RequestParam String subject,
+                                    @RequestParam String content,
+                                    Authentication authentication,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            String adminEmail = authentication.getName();
+            com.gsc.hallbooking.entity.User admin = userService.getCurrentUser(adminEmail);
+            messageService.sendBroadcastMessage(admin, subject, content);
+            redirectAttributes.addFlashAttribute("success", "Broadcast message sent to all users!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/messages";
+    }
+    
+    @PostMapping("/messages/send-direct")
+    public String sendDirectMessage(@RequestParam Long recipientId,
+                                 @RequestParam String subject,
+                                 @RequestParam String content,
+                                 Authentication authentication,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            String adminEmail = authentication.getName();
+            com.gsc.hallbooking.entity.User admin = userService.getCurrentUser(adminEmail);
+            messageService.sendDirectMessage(admin, recipientId, subject, content);
+            redirectAttributes.addFlashAttribute("success", "Direct message sent successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/messages";
+    }
+    
+    // READ - View specific message
+    @GetMapping("/messages/view/{id}")
+    public String viewMessage(@PathVariable Long id, Model model) {
+        try {
+            model.addAttribute("message", messageService.getMessageById(id));
+            return "admin/view-message";
+        } catch (RuntimeException e) {
+            return "redirect:/admin/messages?error=" + e.getMessage();
+        }
+    }
+    
+    // UPDATE - Edit message form
+    @GetMapping("/messages/edit/{id}")
+    public String editMessageForm(@PathVariable Long id, Model model) {
+        try {
+            model.addAttribute("message", messageService.getMessageById(id));
+            model.addAttribute("users", messageService.getAllUsers());
+            return "admin/edit-message";
+        } catch (RuntimeException e) {
+            return "redirect:/admin/messages?error=" + e.getMessage();
+        }
+    }
+    
+    // UPDATE - Update message
+    @PostMapping("/messages/update/{id}")
+    public String updateMessage(@PathVariable Long id,
+                              @RequestParam String subject,
+                              @RequestParam String content,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            messageService.updateMessage(id, subject, content);
+            redirectAttributes.addFlashAttribute("success", "Message updated successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/messages";
+    }
+    
+    // DELETE - Delete message
+    @PostMapping("/messages/delete/{id}")
+    public String deleteMessage(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            messageService.deleteMessage(id);
+            redirectAttributes.addFlashAttribute("success", "Message deleted successfully!");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/messages";
+    }
+    
+    // READ - Filter messages by type
+    @GetMapping("/messages/filter")
+    public String filterMessages(@RequestParam String type, Model model) {
+        model.addAttribute("users", messageService.getAllUsers());
+        model.addAttribute("messages", messageService.getMessagesByType(type));
+        model.addAttribute("filterType", type);
+        return "admin/messages";
     }
 }
 
