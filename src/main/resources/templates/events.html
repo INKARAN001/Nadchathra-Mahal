@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events We Host - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/halls}">Our Halls</a>
+                <a th:href="@{/food-menu}">Food Menu</a>
+                <a th:href="@{/events}">Events</a>
+                <a th:href="@{/contact}">Contact Us</a>
+                <a th:href="@{/login}" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Events We Host</h1>
+            <p>From intimate gatherings to grand celebrations - we make every moment special</p>
+        </div>
+    </section>
+
+    <section class="events-section">
+        <div class="container">
+            <div class="events-grid">
+                <!-- Wedding Events -->
+                <div class="event-card">
+                    <div class="event-icon">💍</div>
+                    <h3>Weddings & Receptions</h3>
+                    <p>Make your special day unforgettable with our elegant venues, exquisite catering, and dedicated event coordination team.</p>
+                    <ul class="event-features">
+                        <li>Bridal Suite & Changing Rooms</li>
+                        <li>Stage & Mandap Setup</li>
+                        <li>Customized Decor</li>
+                        <li>Multi-Course Dining</li>
+                        <li>Photography Assistance</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Wedding</a>
+                </div>
+
+                <!-- Corporate Events -->
+                <div class="event-card">
+                    <div class="event-icon">💼</div>
+                    <h3>Corporate Events</h3>
+                    <p>Professional venues equipped with modern technology for conferences, seminars, product launches, and corporate parties.</p>
+                    <ul class="event-features">
+                        <li>Projector & Audio-Visual Equipment</li>
+                        <li>High-Speed WiFi</li>
+                        <li>Podium & Stage Setup</li>
+                        <li>Business Catering</li>
+                        <li>Breakout Areas</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Corporate</a>
+                </div>
+
+                <!-- Birthday Parties -->
+                <div class="event-card">
+                    <div class="event-icon">🎂</div>
+                    <h3>Birthday Celebrations</h3>
+                    <p>From kids' birthdays to milestone celebrations, create magical moments with themed decorations and entertainment options.</p>
+                    <ul class="event-features">
+                        <li>Themed Decorations</li>
+                        <li>Entertainment Areas</li>
+                        <li>Cake & Dessert Station</li>
+                        <li>DJ & Dance Floor</li>
+                        <li>Photo Booth Setup</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Birthday</a>
+                </div>
+
+                <!-- Anniversary Parties -->
+                <div class="event-card">
+                    <div class="event-icon">💝</div>
+                    <h3>Anniversary Parties</h3>
+                    <p>Celebrate years of togetherness with intimate gatherings or grand celebrations in our romantic and elegant settings.</p>
+                    <ul class="event-features">
+                        <li>Romantic Ambiance</li>
+                        <li>Personalized Decor</li>
+                        <li>Fine Dining Options</li>
+                        <li>Music & Entertainment</li>
+                        <li>Special Couple Seating</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Anniversary</a>
+                </div>
+
+                <!-- Engagement Ceremonies -->
+                <div class="event-card">
+                    <div class="event-icon">💐</div>
+                    <h3>Engagement Ceremonies</h3>
+                    <p>Begin your journey together with a beautiful engagement celebration in our sophisticated venues.</p>
+                    <ul class="event-features">
+                        <li>Elegant Stage Setup</li>
+                        <li>Ring Ceremony Area</li>
+                        <li>Traditional & Modern Decor</li>
+                        <li>Reception Dining</li>
+                        <li>Photography Spots</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Engagement</a>
+                </div>
+
+                <!-- Social Gatherings -->
+                <div class="event-card">
+                    <div class="event-icon">🎉</div>
+                    <h3>Social Gatherings</h3>
+                    <p>Host reunions, get-togethers, cultural events, and community celebrations in our versatile spaces.</p>
+                    <ul class="event-features">
+                        <li>Flexible Seating</li>
+                        <li>Entertainment Systems</li>
+                        <li>Casual Dining Options</li>
+                        <li>Activity Areas</li>
+                        <li>Ample Parking</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Gathering</a>
+                </div>
+
+                <!-- Baby Showers -->
+                <div class="event-card">
+                    <div class="event-icon">👶</div>
+                    <h3>Baby Showers</h3>
+                    <p>Celebrate the upcoming arrival with themed decorations, games, and a joyful atmosphere for friends and family.</p>
+                    <ul class="event-features">
+                        <li>Cute Themed Decor</li>
+                        <li>Games & Activity Area</li>
+                        <li>Buffet or Served Meal</li>
+                        <li>Gift Table Setup</li>
+                        <li>Comfortable Seating</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Baby Shower</a>
+                </div>
+
+                <!-- Cultural Events -->
+                <div class="event-card">
+                    <div class="event-icon">🎭</div>
+                    <h3>Cultural & Religious Events</h3>
+                    <p>Perfect for festivals, religious ceremonies, cultural programs, and traditional celebrations with required amenities.</p>
+                    <ul class="event-features">
+                        <li>Large Open Spaces</li>
+                        <li>Prayer/Stage Area</li>
+                        <li>Traditional Decor Options</li>
+                        <li>Community Dining</li>
+                        <li>Flexible Timing</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Cultural Event</a>
+                </div>
+
+                <!-- Graduation Parties -->
+                <div class="event-card">
+                    <div class="event-icon">🎓</div>
+                    <h3>Graduation Parties</h3>
+                    <p>Celebrate academic achievements with friends and family in a festive environment with modern amenities.</p>
+                    <ul class="event-features">
+                        <li>Modern Setup</li>
+                        <li>Photo Display Areas</li>
+                        <li>DJ & Dance Floor</li>
+                        <li>Casual Dining</li>
+                        <li>Youth-Friendly Atmosphere</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Graduation</a>
+                </div>
+
+                <!-- Charity Events -->
+                <div class="event-card">
+                    <div class="event-icon">🤝</div>
+                    <h3>Charity & Fundraisers</h3>
+                    <p>Host meaningful events, fundraisers, and community initiatives with our flexible venues and supportive services.</p>
+                    <ul class="event-features">
+                        <li>Presentation Equipment</li>
+                        <li>Registration Areas</li>
+                        <li>Exhibition Space</li>
+                        <li>Refreshments</li>
+                        <li>Special Rates Available</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Charity Event</a>
+                </div>
+
+                <!-- Award Ceremonies -->
+                <div class="event-card">
+                    <div class="event-icon">🏆</div>
+                    <h3>Award Ceremonies</h3>
+                    <p>Recognize excellence and achievements with professional event hosting, stage setup, and elegant dining arrangements.</p>
+                    <ul class="event-features">
+                        <li>Professional Stage</li>
+                        <li>Lighting & Sound</li>
+                        <li>VIP Seating</li>
+                        <li>Award Display Area</li>
+                        <li>Formal Dining</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Award Ceremony</a>
+                </div>
+
+                <!-- Fashion Shows -->
+                <div class="event-card">
+                    <div class="event-icon">👗</div>
+                    <h3>Fashion Shows & Exhibitions</h3>
+                    <p>Runway-ready spaces with professional lighting, backstage areas, and seating arrangements for fashion events.</p>
+                    <ul class="event-features">
+                        <li>Runway Setup</li>
+                        <li>Backstage Changing Area</li>
+                        <li>Professional Lighting</li>
+                        <li>Audience Seating</li>
+                        <li>Music System</li>
+                    </ul>
+                    <a th:href="@{/signup}" class="btn btn-secondary">Book for Fashion Show</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="event-process-section">
+        <div class="container">
+            <h2>How We Make Your Event Perfect</h2>
+            <div class="process-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-icon">📋</div>
+                    <h3>1. Consultation</h3>
+                    <p>We understand your vision, requirements, and budget to craft the perfect event plan.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">🎨</div>
+                    <h3>2. Planning & Design</h3>
+                    <p>Our team creates a customized setup with decor, seating, and catering arrangements.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">✅</div>
+                    <h3>3. Booking Confirmation</h3>
+                    <p>Secure your date with easy online booking and transparent pricing.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">🎊</div>
+                    <h3>4. Event Execution</h3>
+                    <p>On the day, our staff ensures everything runs smoothly while you enjoy your celebration.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonial-section">
+        <div class="container">
+            <h2>What Our Clients Say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"The perfect venue for our wedding! Everything was handled professionally and the food was amazing. Highly recommended!"</p>
+                    <p class="testimonial-author">- Priya & Rahul</p>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"We hosted our company's annual conference here. The facilities were excellent and the staff was very supportive."</p>
+                    <p class="testimonial-author">- Tech Solutions Pvt Ltd</p>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"My daughter's birthday party was a huge success! The themed decorations and entertainment were exactly what we wanted."</p>
+                    <p class="testimonial-author">- Mrs. Sharma</p>
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Plan Your Event?</h2>
+            <p>Let us help you create unforgettable memories!</p>
+            <div class="cta-buttons">
+                <a th:href="@{/signup}" class="btn btn-large btn-primary">Book Now</a>
+                <a th:href="@{/contact}" class="btn btn-large btn-secondary">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
