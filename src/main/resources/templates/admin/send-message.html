@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Message - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .message-form {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .message-type-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-button.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .user-select {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 0.5rem;
+        }
+        .user-option {
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .user-option:hover {
+            background-color: #f3f4f6;
+        }
+        .user-option.selected {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .selected-user {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Dashboard</a>
+                <a th:href="@{/admin/messages}" class="btn btn-secondary">All Messages</a>
+                <a th:href="@{/admin/users}" class="btn btn-secondary">Manage Users</a>
+                <a th:href="@{/admin/feedbacks}" class="btn btn-secondary">Manage Feedbacks</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>Send Message</h2>
+                <p>Send messages to all users or specific users</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="message-form">
+                <div class="message-type-tabs">
+                    <button type="button" class="tab-button active" onclick="showTab('broadcast')">
+                        📢 Broadcast to All Users
+                    </button>
+                    <button type="button" class="tab-button" onclick="showTab('direct')">
+                        👤 Send to Specific User
+                    </button>
+                </div>
+
+                <!-- Broadcast Message Form -->
+                <div id="broadcast-tab" class="tab-content active">
+                    <form th:action="@{/admin/messages/send-broadcast}" method="post">
+                        <div class="form-group">
+                            <label for="broadcast-subject">Subject *</label>
+                            <input type="text" id="broadcast-subject" name="subject" required 
+                                   placeholder="Enter message subject">
+                        </div>
+                        <div class="form-group">
+                            <label for="broadcast-content">Message Content *</label>
+                            <textarea id="broadcast-content" name="content" required 
+                                      placeholder="Enter your message content here..."></textarea>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="submit" class="btn btn-primary">Send to All Users</button>
+                            <a th:href="@{/admin/messages}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Direct Message Form -->
+                <div id="direct-tab" class="tab-content">
+                    <form th:action="@{/admin/messages/send-direct}" method="post">
+                        <div class="form-group">
+                            <label for="recipient-select">Select User *</label>
+                            <div class="user-select" id="user-select">
+                                <div th:each="user : ${users}" 
+                                     class="user-option" 
+                                     th:data-user-id="${user.id}"
+                                     th:data-user-name="${user.name}"
+                                     th:data-user-email="${user.email}"
+                                     onclick="selectUser(this)">
+                                    <div th:text="${user.name}"></div>
+                                    <div style="font-size: 0.875rem; color: #6b7280;" th:text="${user.email}"></div>
+                                </div>
+                            </div>
+                            <div id="selected-user-display" style="display: none;">
+                                <div class="selected-user">
+                                    <span id="selected-user-name"></span>
+                                    <button type="button" onclick="clearSelection()" style="margin-left: 0.5rem; background: none; border: none; color: #ef4444; cursor: pointer;">×</button>
+                                </div>
+                            </div>
+                            <input type="hidden" id="recipient-id" name="recipientId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="direct-subject">Subject *</label>
+                            <input type="text" id="direct-subject" name="subject" required 
+                                   placeholder="Enter message subject">
+                        </div>
+                        <div class="form-group">
+                            <label for="direct-content">Message Content *</label>
+                            <textarea id="direct-content" name="content" required 
+                                      placeholder="Enter your message content here..."></textarea>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="submit" class="btn btn-primary">Send Message</button>
+                            <a th:href="@{/admin/messages}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        function selectUser(element) {
+            // Remove previous selection
+            document.querySelectorAll('.user-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selection to clicked element
+            element.classList.add('selected');
+            
+            // Update hidden input and display
+            const userId = element.dataset.userId;
+            const userName = element.dataset.userName;
+            
+            document.getElementById('recipient-id').value = userId;
+            document.getElementById('selected-user-name').textContent = userName;
+            document.getElementById('selected-user-display').style.display = 'block';
+        }
+
+        function clearSelection() {
+            document.querySelectorAll('.user-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.getElementById('recipient-id').value = '';
+            document.getElementById('selected-user-display').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
