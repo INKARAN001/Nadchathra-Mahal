@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Feedbacks - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Bookings</a>
+                <a th:href="@{/admin/users}" class="btn btn-secondary">Manage Users</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>Manage Feedbacks</h2>
+                <p>Review and approve customer feedbacks</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+
+            <div class="section">
+                <h3>Customer Feedbacks</h3>
+                
+                <div th:if="${feedbacks.isEmpty()}" style="text-align: center; padding: 3rem; color: #6b7280;">
+                    <p style="font-size: 1.1rem;">No feedbacks yet.</p>
+                </div>
+
+                <div th:if="${!feedbacks.isEmpty()}" style="display: grid; gap: 1.5rem;">
+                    <div th:each="feedback : ${feedbacks}" style="padding: 1.5rem; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h4 style="font-size: 1.1rem; color: #1f2937; margin-bottom: 0.3rem;" th:text="${feedback.user.name}"></h4>
+                                <small style="color: #6b7280;" th:text="${feedback.user.email}"></small>
+                            </div>
+                            <span class="badge" 
+                                  th:classappend="${feedback.approved ? 'badge-accepted' : 'badge-pending'}"
+                                  th:text="${feedback.approved ? 'Approved' : 'Pending'}"></span>
+                        </div>
+                        <p style="color: #4b5563; margin-bottom: 1rem; line-height: 1.6;" th:text="${feedback.message}"></p>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <small style="color: #9ca3af;" th:text="${#temporals.format(feedback.createdAt, 'dd MMM yyyy HH:mm')}"></small>
+                            <div class="action-buttons">
+                                <form th:if="${!feedback.approved}" 
+                                      th:action="@{/admin/feedback/approve/{id}(id=${feedback.id})}" 
+                                      method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-success btn-small">✓ Approve</button>
+                                </form>
+                                <form th:if="${feedback.approved}" 
+                                      th:action="@{/admin/feedback/disapprove/{id}(id=${feedback.id})}" 
+                                      method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-warning btn-small">✗ Remove</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+
