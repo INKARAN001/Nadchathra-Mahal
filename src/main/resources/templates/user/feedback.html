@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Give Feedback - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/user/dashboard}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/user/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="booking-container">
+        <div class="container">
+            <div class="booking-card">
+                <h2>Share Your Feedback</h2>
+                <p style="color: #6b7280; margin-bottom: 2rem;">We value your opinion! Let us know about your experience.</p>
+                
+                <form th:action="@{/user/feedback}" method="post">
+                    <div class="form-group">
+                        <label for="message">Your Feedback *</label>
+                        <textarea id="message" name="message" rows="6" required 
+                                  placeholder="Tell us about your experience..."></textarea>
+                    </div>
+
+                    <div class="booking-actions">
+                        <a th:href="@{/user/dashboard}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+
