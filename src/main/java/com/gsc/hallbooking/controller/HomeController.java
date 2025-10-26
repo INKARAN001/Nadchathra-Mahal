@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Collections;
 
+/**
+ * DEVELOPER: JADAVAN
+ * CRUD: Home Controller - Website Pages
+ */
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
