@@ -11,12 +11,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+/**
+ * DEVELOPER: JADAVAN
+ * CRUD: User Authentication Service
+ */
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     
     private final UserRepository userRepository;
     
+    // READ - Load user by username (email)
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
