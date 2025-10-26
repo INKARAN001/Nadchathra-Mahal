@@ -5,15 +5,16 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+/**
+ * DEVELOPER: AKASH
+ * CRUD: Booking Entity - Booking Management
+ */
 @Entity
 @Table(name = "bookings")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = {"user"})
-@ToString(exclude = {"user"})
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,25 +39,9 @@ public class Booking {
     @Column(nullable = false)
     private LocalDate bookingDate;
     
-    @Column(nullable = false)
-    private String foodType; // Green Delight, Royal Feast, Spicy Grill, Ocean Treasure
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private BookingDetails bookingDetails;
     
-    @Column(nullable = false)
-    private Integer peopleCount;
-    
-    @Column(nullable = false)
-    private Double totalAmount;
-    
-    @Column(nullable = false)
-    private String paymentType; // CARD or CASH
-    
-    @Column(nullable = false)
-    private String paymentStatus; // PENDING, PAID
-    
-    @Column(nullable = false)
-    private String bookingStatus; // PENDING, ACCEPTED, REJECTED, BOOKED
-    
-    // Removed bidirectional relationship to avoid circular dependency
-    // Payment relationship is handled unidirectionally from Payment entity
+    // Payment information is handled in booking_details table
 }
 
