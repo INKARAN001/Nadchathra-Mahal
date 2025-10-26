@@ -5,15 +5,16 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * DEVELOPER: INKARAN
+ * CRUD: Feedback Entity - Feedback Management
+ */
 @Entity
 @Table(name = "feedback")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(exclude = {"user"})
-@ToString(exclude = {"user"})
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,14 +28,19 @@ public class Feedback {
     private String message;
     
     @Column(nullable = false)
-    private Boolean approved = false;
+    private Boolean approved;
     
     @Column(nullable = false)
     private LocalDateTime createdAt;
     
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
+        if (approved == null) {
+            approved = false;
+        }
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
     }
 }
 
