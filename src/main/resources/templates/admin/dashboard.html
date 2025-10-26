@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- DEVELOPER: INKARAN - Admin Dashboard & Management Interface -->
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/admin/messages}" class="btn btn-secondary">Messages</a>
+                <a th:href="@{/admin/users}" class="btn btn-secondary">Manage Users</a>
+                <a th:href="@{/admin/feedbacks}" class="btn btn-secondary">Manage Feedbacks</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>Admin Dashboard</h2>
+                <p>Manage bookings, users, and feedbacks</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="section">
+                <h3>All Bookings</h3>
+                
+                <div th:if="${bookings.isEmpty()}" style="text-align: center; padding: 3rem; color: #6b7280;">
+                    <p style="font-size: 1.1rem;">No bookings yet.</p>
+                </div>
+
+                <div class="table-container" th:if="${!bookings.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Contact</th>
+                                <th>Hall</th>
+                                <th>Date</th>
+                                <th>Food</th>
+                                <th>Guests</th>
+                                <th>Amount</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="booking : ${bookings}">
+                                <td th:text="${booking.id}"></td>
+                                <td>
+                                    <div th:text="${booking.fullName}" style="font-weight: 600;"></div>
+                                    <small style="color: #6b7280;" th:text="${booking.user.email}"></small>
+                                </td>
+                                <td>
+                                    <div th:text="${booking.phoneNumber}"></div>
+                                    <small style="color: #6b7280;" th:text="${booking.emailAddress}"></small>
+                                </td>
+                                <td th:text="${booking.hall}"></td>
+                                <td th:text="${#temporals.format(booking.bookingDate, 'dd MMM yyyy')}"></td>
+                                <td th:text="${booking.bookingDetails != null ? booking.bookingDetails.foodType : 'N/A'}"></td>
+                                <td th:text="${booking.bookingDetails != null ? booking.bookingDetails.peopleCount : 'N/A'}"></td>
+                                <td><span th:if="${booking.bookingDetails != null}">₹<span th:text="${#numbers.formatDecimal(booking.bookingDetails.totalAmount, 0, 'COMMA', 2, 'POINT')}"></span></span><span th:if="${booking.bookingDetails == null}">N/A</span></td>
+                                <td>
+                                    <div th:if="${booking.bookingDetails != null}" th:text="${booking.bookingDetails.paymentType}" style="margin-bottom: 0.3rem;"></div>
+                                    <div th:if="${booking.bookingDetails == null}">N/A</div>
+                                    <span th:if="${booking.bookingDetails != null}" class="badge" 
+                                          th:classappend="${booking.bookingDetails.paymentStatus == 'PAID' ? 'badge-paid' : 'badge-pending'}"
+                                          th:text="${booking.bookingDetails.paymentStatus}"></span>
+                                </td>
+                                <td>
+                                    <span th:if="${booking.bookingDetails != null}" class="badge" 
+                                          th:classappend="${booking.bookingDetails.bookingStatus == 'PENDING' ? 'badge-pending' : 
+                                                          booking.bookingDetails.bookingStatus == 'ACCEPTED' ? 'badge-accepted' : 
+                                                          booking.bookingDetails.bookingStatus == 'REJECTED' ? 'badge-rejected' : 
+                                                          'badge-paid'}"
+                                          th:text="${booking.bookingDetails.bookingStatus}"></span>
+                                    <span th:if="${booking.bookingDetails == null}" class="badge badge-pending">INCOMPLETE</span>
+                                </td>
+                                <td>
+                                    <div th:if="${booking.bookingDetails != null && booking.bookingDetails.bookingStatus == 'PENDING'}" class="action-buttons">
+                                        <form th:action="@{/admin/booking/accept/{id}(id=${booking.id})}" method="post" style="display: inline;">
+                                            <button type="submit" class="btn btn-success btn-small">✓ Accept</button>
+                                        </form>
+                                        <form th:action="@{/admin/booking/reject/{id}(id=${booking.id})}" method="post" style="display: inline;">
+                                            <button type="submit" class="btn btn-danger btn-small">✗ Reject</button>
+                                        </form>
+                                    </div>
+                                    <div th:if="${booking.bookingDetails != null && booking.bookingDetails.bookingStatus == 'ACCEPTED' && booking.bookingDetails.paymentStatus == 'PENDING' && booking.bookingDetails.paymentType == 'CASH'}">
+                                        <form th:action="@{/admin/booking/mark-paid/{id}(id=${booking.id})}" method="post" style="display: inline;">
+                                            <button type="submit" class="btn btn-primary btn-small">💵 Mark Paid</button>
+                                        </form>
+                                    </div>
+                                    <span th:if="${booking.bookingDetails != null && booking.bookingDetails.bookingStatus == 'BOOKED'}" style="color: #065f46;">✓ Completed</span>
+                                    <span th:if="${booking.bookingDetails != null && booking.bookingDetails.bookingStatus == 'REJECTED'}" style="color: #991b1b;">✗ Rejected</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+
