@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Hall - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .calendar-container {
+            margin-top: 1rem;
+        }
+        
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .calendar-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 0.5rem;
+            background: #f3f4f6;
+            border-radius: 4px;
+        }
+        
+        .calendar-day {
+            text-align: center;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .calendar-day:hover:not(.disabled):not(.booked) {
+            background: #dbeafe;
+            border-color: #3b82f6;
+        }
+        
+        .calendar-day.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        .calendar-day.booked {
+            background: #fee2e2;
+            color: #991b1b;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+        
+        .calendar-day.disabled {
+            background: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .calendar-legend {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .legend-box.available {
+            background: white;
+        }
+        
+        .legend-box.booked {
+            background: #fee2e2;
+        }
+        
+        .legend-box.selected {
+            background: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/user/dashboard}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/user/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="booking-container">
+        <div class="container">
+            <div class="progress-bar">
+                <div class="progress-step active">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Hall & Date</div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Food & Payment</div>
+                </div>
+            </div>
+
+            <div class="booking-card">
+                <h2>Step 1: Select Hall and Date</h2>
+                <div style="background: #e0f2fe; border: 1px solid #7dd3fc; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                    <strong>📋 Booking for:</strong> <span th:text="${user.name}"></span> | 
+                    <strong>📧</strong> <span th:text="${user.email}"></span> | 
+                    <strong>📱</strong> <span th:text="${user.phone}"></span>
+                </div>
+                
+                <form id="stage1Form" th:action="@{/user/booking/stage1}" method="post">
+
+                    <div class="form-group">
+                        <label>Select Hall *</label>
+                        <div class="hall-options">
+                            <div th:if="${#lists.isEmpty(halls)}" style="text-align: center; padding: 2rem; color: #6b7280;">
+                                <p>No halls available for booking.</p>
+                                <p>Please contact the manager to add halls.</p>
+                            </div>
+                            <label th:each="hall : ${halls}" class="hall-option">
+                                <input type="radio" name="hall" th:value="${hall.name}" required onchange="loadCalendar()">
+                                <div class="hall-card">
+                                    <h3 th:text="${hall.name}"></h3>
+                                    <p th:text="${hall.description}"></p>
+                                    <p class="hall-capacity">Capacity: <span th:text="${hall.capacity}"></span> guests</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bookingDate">Select Date *</label>
+                        <input type="date" id="bookingDate" name="bookingDate" required 
+                               th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                               onchange="updateCalendarSelection()">
+                        <div style="font-size: 0.9rem; color: #6b7280; margin-top: 0.5rem;">
+                            💡 Tip: Select a hall first, then use the calendar below to choose an available date. Multiple users can request same date!
+                        </div>
+                    </div>
+
+                    <!-- Calendar View -->
+                    <div class="calendar-container">
+                        <div id="calendarView">
+                            <p style="text-align: center; color: #6b7280; padding: 2rem;">
+                                Please select a hall to view available dates
+                            </p>
+                        </div>
+                        <div class="calendar-legend" style="display: none;" id="calendarLegend">
+                            <div class="legend-item">
+                                <div class="legend-box available"></div>
+                                <span>Available (or pending approval)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-box booked"></div>
+                                <span>Confirmed by admin</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-box selected"></div>
+                                <span>Selected</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a th:href="@{/user/dashboard}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Next: Food & Payment →</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/booking.js}"></script>
+    <script>
+        let bookedDates = [];
+
+        // Helper function to format date in local timezone (fixes timezone bug)
+        function formatDateLocal(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        async function loadCalendar() {
+            const selectedHall = document.querySelector('input[name="hall"]:checked');
+            if (!selectedHall) return;
+            
+            const hall = selectedHall.value;
+            
+            try {
+                const response = await fetch(`/user/booking/api/booked-dates?hall=${encodeURIComponent(hall)}`);
+                bookedDates = await response.json();
+                document.getElementById('calendarLegend').style.display = 'flex';
+                generateCalendar();
+            } catch (error) {
+                console.error('Error loading booked dates:', error);
+                document.getElementById('calendarView').innerHTML = 
+                    '<p style="text-align: center; color: #ef4444; padding: 2rem;">Error loading calendar. Please try again.</p>';
+            }
+        }
+
+        function generateCalendar() {
+            const calendarView = document.getElementById('calendarView');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normalize to start of day
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            
+            // Get current selected date
+            const bookingDateInput = document.getElementById('bookingDate');
+            const selectedDate = bookingDateInput.value;
+            
+            let html = '<h4 style="margin-bottom: 1rem;">' + 
+                      today.toLocaleString('default', { month: 'long', year: 'numeric' }) + 
+                      '</h4>';
+            
+            html += '<div class="calendar">';
+            
+            // Day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                html += `<div class="calendar-header">${day}</div>`;
+            });
+            
+            // Get first day of month and days in month
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // Empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="calendar-day disabled"></div>';
+            }
+            
+            // Days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(currentYear, currentMonth, day);
+                date.setHours(0, 0, 0, 0); // Normalize to start of day
+                const dateString = formatDateLocal(date); // Use local timezone formatting
+                const todayString = formatDateLocal(today);
+                const isPast = date < today && dateString !== todayString;
+                const isBooked = bookedDates.includes(dateString);
+                const isSelected = dateString === selectedDate;
+                
+                let className = 'calendar-day';
+                if (isPast) className += ' disabled';
+                else if (isBooked) className += ' booked';
+                else if (isSelected) className += ' selected';
+                
+                const onclick = (!isPast && !isBooked) ? `onclick="selectDate('${dateString}')"` : '';
+                
+                html += `<div class="${className}" ${onclick}>${day}</div>`;
+            }
+            
+            html += '</div>';
+            calendarView.innerHTML = html;
+        }
+
+        function selectDate(dateString) {
+            document.getElementById('bookingDate').value = dateString;
+            generateCalendar();
+        }
+
+        function updateCalendarSelection() {
+            const selectedHall = document.querySelector('input[name="hall"]:checked');
+            if (selectedHall) {
+                generateCalendar();
+            }
+        }
+    </script>
+</body>
+</html>
