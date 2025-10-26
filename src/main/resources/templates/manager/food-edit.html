@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Food Item - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/manager/dashboard}">NADCHATHRA MAHAL - Manager</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/manager/dashboard}">Dashboard</a>
+                <a th:href="@{/manager/halls}">Halls</a>
+                <a th:href="@{/manager/foods}" class="active">Foods</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container" style="max-width: 600px;">
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="booking-card">
+                <h2>✏️ Edit Food Item</h2>
+                <p style="color: #6b7280;">Editing: <strong th:text="${food.name}"></strong></p>
+
+                <form th:action="@{/manager/foods/update/{id}(id=${food.id})}" method="post">
+                    <div class="form-group">
+                        <label for="name">Food Item Name *</label>
+                        <input type="text" id="name" name="name" th:value="${food.name}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pricePerPerson">Price Per Person (₹) *</label>
+                        <input type="number" id="pricePerPerson" name="pricePerPerson" 
+                               th:value="${food.pricePerPerson}"
+                               required min="0" step="0.01">
+                        <div class="help-text">Cost per person for this food item</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <select id="category" name="category" required>
+                            <option value="VEG" th:selected="${food.category == 'VEG'}">Vegetarian (VEG)</option>
+                            <option value="NON_VEG" th:selected="${food.category == 'NON_VEG'}">Non-Vegetarian (NON_VEG)</option>
+                            <option value="SEAFOOD" th:selected="${food.category == 'SEAFOOD'}">Seafood</option>
+                            <option value="VEGAN" th:selected="${food.category == 'VEGAN'}">Vegan</option>
+                            <option value="DESSERTS" th:selected="${food.category == 'DESSERTS'}">Desserts</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="4" th:text="${food.description}"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="active">Status *</label>
+                        <select id="active" name="active" required>
+                            <option value="true" th:selected="${food.active}">Active</option>
+                            <option value="false" th:selected="${!food.active}">Inactive</option>
+                        </select>
+                        <div class="help-text">Inactive food items won't be available for selection</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a th:href="@{/manager/foods}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">💾 Update Food Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+
