@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .message-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #3b82f6;
+        }
+        .message-card.unread {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .message-content {
+            color: #374151;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            margin: 1rem 0;
+        }
+        .message-meta {
+            font-size: 0.875rem;
+            color: #6b7280;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .unread-badge {
+            background: #ef4444;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .message-type {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .message-type.broadcast {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .message-type.direct {
+            background: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/user/dashboard}" class="btn btn-secondary">Dashboard</a>
+                <a th:href="@{/user/profile}" class="btn btn-secondary">Profile</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div>
+                    <h2>Messages</h2>
+                    <p>View messages from administrators</p>
+                </div>
+                <div th:if="${unreadCount > 0}">
+                    <form th:action="@{/user/messages/mark-all-read}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-primary">Mark All as Read</button>
+                    </form>
+                </div>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="section">
+                <div th:if="${messages.isEmpty()}" style="text-align: center; padding: 3rem; color: #6b7280;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+                    <p style="font-size: 1.1rem;">No messages yet.</p>
+                    <p>You'll receive notifications here when administrators send messages.</p>
+                </div>
+
+                <div th:if="${!messages.isEmpty()}">
+                    <div th:each="message : ${messages}" 
+                         class="message-card" 
+                         th:classappend="${message.isRead != null && !message.isRead ? 'unread' : ''}">
+                        
+                        <div class="message-header">
+                            <div>
+                                <h4 th:text="${message.subject}"></h4>
+                                <span th:if="${message.isRead != null && !message.isRead}" class="unread-badge">NEW</span>
+                            </div>
+                            <div class="message-meta">
+                                <div th:text="${#temporals.format(message.createdAt, 'MMM dd, yyyy HH:mm')}"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="message-content" th:text="${message.content}"></div>
+                        
+                        <div class="message-meta">
+                            <div>
+                                From: <span th:text="${message.sender.name}"></span>
+                                <span class="message-type" 
+                                      th:classappend="${message.recipient == null ? 'broadcast' : 'direct'}"
+                                      th:text="${message.recipient == null ? 'BROADCAST' : 'DIRECT'}"></span>
+                            </div>
+                            <div th:if="${message.isRead != null && !message.isRead}">
+                                <form th:action="@{/user/messages/mark-read/{id}(id=${message.id})}" method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-secondary">Mark as Read</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
