@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Messages - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .message-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #3b82f6;
+        }
+        .message-card.broadcast {
+            border-left-color: #10b981;
+        }
+        .message-card.direct {
+            border-left-color: #f59e0b;
+        }
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .message-type {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .message-type.broadcast {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .message-type.direct {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .message-content {
+            color: #374151;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        .message-meta {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+        .recipient-info {
+            font-weight: 500;
+            color: #1f2937;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Dashboard</a>
+                <a th:href="@{/admin/users}" class="btn btn-secondary">Manage Users</a>
+                <a th:href="@{/admin/feedbacks}" class="btn btn-secondary">Manage Feedbacks</a>
+                <a th:href="@{/admin/messages/send}" class="btn btn-primary">Send Message</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>Message Management</h2>
+                <p>View and manage all messages sent to users</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h3>All Messages</h3>
+                    <div style="display: flex; gap: 1rem;">
+                        <a th:href="@{/admin/messages/send}" class="btn btn-primary">Send New Message</a>
+                    </div>
+                </div>
+                
+                <!-- Filter Options -->
+                <div style="margin-bottom: 2rem; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                    <h4 style="margin-bottom: 1rem;">Filter Messages</h4>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a th:href="@{/admin/messages}" 
+                           class="btn btn-secondary" 
+                           th:classappend="${filterType == null ? 'btn-primary' : 'btn-secondary'}">All Messages</a>
+                        <a th:href="@{/admin/messages/filter(type='BROADCAST')}" 
+                           class="btn btn-secondary" 
+                           th:classappend="${filterType == 'BROADCAST' ? 'btn-primary' : 'btn-secondary'}">Broadcast Only</a>
+                        <a th:href="@{/admin/messages/filter(type='DIRECT')}" 
+                           class="btn btn-secondary" 
+                           th:classappend="${filterType == 'DIRECT' ? 'btn-primary' : 'btn-secondary'}">Direct Only</a>
+                    </div>
+                </div>
+                
+                <div th:if="${messages.isEmpty()}" style="text-align: center; padding: 3rem; color: #6b7280;">
+                    <p style="font-size: 1.1rem;">No messages sent yet.</p>
+                    <a th:href="@{/admin/messages/send}" class="btn btn-primary" style="margin-top: 1rem;">Send First Message</a>
+                </div>
+
+                <div th:if="${!messages.isEmpty()}">
+                    <div th:each="message : ${messages}" class="message-card" th:classappend="${message.messageType.toLowerCase()}">
+                        <div class="message-header">
+                            <div>
+                                <h4 th:text="${message.subject}"></h4>
+                                <span class="message-type" th:text="${message.messageType}"></span>
+                            </div>
+                            <div class="message-meta">
+                                <div th:text="${#temporals.format(message.createdAt, 'MMM dd, yyyy HH:mm')}"></div>
+                                <div th:if="${message.recipient != null}" class="recipient-info">
+                                    To: <span th:text="${message.recipient.name}"></span>
+                                </div>
+                                <div th:if="${message.recipient == null}" class="recipient-info">
+                                    To: All Users
+                                </div>
+                            </div>
+                        </div>
+                        <div class="message-content" th:text="${message.content}"></div>
+                        <div class="message-meta">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    From: <span th:text="${message.sender.name}"></span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <!-- View Button -->
+                                    <a th:href="@{/admin/messages/view/{id}(id=${message.id})}" 
+                                       class="btn btn-secondary btn-small" 
+                                       title="View Details">
+                                        👁️ View
+                                    </a>
+                                    
+                                    <!-- Edit Button -->
+                                    <a th:href="@{/admin/messages/edit/{id}(id=${message.id})}" 
+                                       class="btn btn-primary btn-small" 
+                                       title="Edit Message">
+                                        ✏️ Edit
+                                    </a>
+                                    
+                                    <!-- Delete Button -->
+                                    <form th:action="@{/admin/messages/delete/{id}(id=${message.id})}" 
+                                          method="post" 
+                                          style="display: inline;"
+                                          onsubmit="return confirm('Are you sure you want to delete this message?')">
+                                        <button type="submit" 
+                                                class="btn btn-danger btn-small" 
+                                                title="Delete Message">
+                                            🗑️ Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
