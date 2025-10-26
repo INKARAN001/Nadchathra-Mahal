@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/user/dashboard}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/user/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="payment-container">
+        <div class="container">
+            <div class="payment-card">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1.5rem; background: #d1fae5; color: #065f46; border-radius: 4px; margin-bottom: 1rem;">
+                        <span>🔒</span>
+                        <span style="font-weight: 600;">Secure Payment</span>
+                    </div>
+                    <h2>Card Payment Gateway</h2>
+                    <p style="color: #6b7280;">Complete your booking payment securely</p>
+                </div>
+
+                <!-- Booking Summary -->
+                <div class="booking-summary">
+                    <h3>Booking Summary</h3>
+                    <div class="summary-item">
+                        <span class="summary-label">Booking ID:</span>
+                        <span class="summary-value" th:text="${booking.id}"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Hall:</span>
+                        <span class="summary-value" th:text="${booking.hall}"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Date:</span>
+                        <span class="summary-value" th:text="${#temporals.format(booking.bookingDate, 'dd MMM yyyy')}"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Food Type:</span>
+                        <span class="summary-value" th:text="${booking.bookingDetails.foodType}"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Number of Guests:</span>
+                        <span class="summary-value" th:text="${booking.bookingDetails.peopleCount}"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Total Amount:</span>
+                        <span class="summary-value">₹<span th:text="${#numbers.formatDecimal(booking.bookingDetails.totalAmount, 0, 'COMMA', 2, 'POINT')}"></span></span>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <div class="payment-form-section">
+                    <h3>Enter Card Details</h3>
+                    
+                    <form th:action="@{/user/booking/process-payment/{id}(id=${booking.id})}" method="post" id="paymentForm">
+                        <div class="form-group">
+                            <label for="cardNumber">Card Number *</label>
+                            <input type="text" 
+                                   id="cardNumber" 
+                                   name="cardNumber" 
+                                   placeholder="1234 5678 9012 3456"
+                                   maxlength="19"
+                                   required>
+                            <div class="card-icons">
+                                <span>💳 Visa</span>
+                                <span>💳 Mastercard</span>
+                                <span>💳 Amex</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cardName">Cardholder Name *</label>
+                            <input type="text" 
+                                   id="cardName" 
+                                   name="cardName" 
+                                   placeholder="JOHN DOE"
+                                   required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="expiryDate">Expiry Date (MM/YY) *</label>
+                                <input type="text" 
+                                       id="expiryDate" 
+                                       name="expiryDate" 
+                                       placeholder="12/25"
+                                       maxlength="5"
+                                       required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cvv">CVV *</label>
+                                <input type="text" 
+                                       id="cvv" 
+                                       name="cvv" 
+                                       placeholder="123"
+                                       maxlength="3"
+                                       required>
+                                <small>3 digits on back</small>
+                            </div>
+                        </div>
+
+                        <div class="payment-info">
+                            <p>🔒 Your payment information is encrypted and secure</p>
+                            <p>💰 Amount to be charged: <strong>₹<span th:text="${#numbers.formatDecimal(booking.bookingDetails.totalAmount, 0, 'COMMA', 2, 'POINT')}"></span></strong></p>
+                        </div>
+
+                        <div class="form-actions">
+                            <a th:href="@{/user/dashboard}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary btn-payment" id="payButton">
+                                <span class="btn-text">Pay Now</span>
+                                <span class="btn-loading" style="display: none;">Processing...</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="payment-footer">
+                    <p><small>⚠️ This is a simulated payment gateway for demo purposes</small></p>
+                    <p><small>✅ Use any 16-digit number for testing</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/payment.js}"></script>
+</body>
+</html>
+
