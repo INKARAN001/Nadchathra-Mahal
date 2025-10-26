@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Halls - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/halls}">Our Halls</a>
+                <a th:href="@{/food-menu}">Food Menu</a>
+                <a th:href="@{/events}">Events</a>
+                <a th:href="@{/contact}">Contact Us</a>
+                <a th:href="@{/login}" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Our Premium Halls</h1>
+            <p>Choose the perfect venue for your special occasion</p>
+        </div>
+    </section>
+
+    <section class="halls-section">
+        <div class="container">
+            <!-- Hall 1 -->
+            <div class="hall-detail-card">
+                <div class="hall-image">
+                    <img th:src="@{/images/hall-1.jpg}" alt="Hall 1" onerror="this.src='/images/1.jpg'">
+                    <div class="hall-badge">Most Popular</div>
+                </div>
+                <div class="hall-info">
+                    <h2>🏛️ Hall 1 - Grand Celebration</h2>
+                    <p class="hall-description">
+                        Our flagship venue perfect for grand celebrations, corporate events, and large gatherings. 
+                        Features state-of-the-art lighting, professional sound system, and elegant decor.
+                    </p>
+                    <div class="hall-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">👥</span>
+                            <div>
+                                <strong>Capacity</strong>
+                                <p>Up to 800 guests</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📏</span>
+                            <div>
+                                <strong>Size</strong>
+                                <p>10,000 sq ft</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎵</span>
+                            <div>
+                                <strong>Sound System</strong>
+                                <p>Premium Audio</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">💡</span>
+                            <div>
+                                <strong>Lighting</strong>
+                                <p>LED & Stage Lights</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">❄️</span>
+                            <div>
+                                <strong>Climate</strong>
+                                <p>Fully Air-Conditioned</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🅿️</span>
+                            <div>
+                                <strong>Parking</strong>
+                                <p>200+ Vehicles</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hall-amenities">
+                        <h3>Amenities</h3>
+                        <ul>
+                            <li>✓ Professional Stage Setup</li>
+                            <li>✓ Bridal Room & Changing Rooms</li>
+                            <li>✓ In-house Catering Kitchen</li>
+                            <li>✓ VIP Lounge Area</li>
+                            <li>✓ Free WiFi</li>
+                            <li>✓ Backup Power Generator</li>
+                        </ul>
+                    </div>
+                    <a th:href="@{/signup}" class="btn btn-primary btn-large">Book Hall 1</a>
+                </div>
+            </div>
+
+            <!-- Hall 2 -->
+            <div class="hall-detail-card">
+                <div class="hall-image">
+                    <img th:src="@{/images/hall-2.jpg}" alt="Hall 2" onerror="this.src='/images/2.jpg'">
+                    <div class="hall-badge hall-badge-premium">Premium Choice</div>
+                </div>
+                <div class="hall-info">
+                    <h2>🎭 Hall 2 - Elegant Affairs</h2>
+                    <p class="hall-description">
+                        A sophisticated venue ideal for weddings, receptions, and upscale social gatherings. 
+                        Combines traditional elegance with modern amenities for an unforgettable experience.
+                    </p>
+                    <div class="hall-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">👥</span>
+                            <div>
+                                <strong>Capacity</strong>
+                                <p>Up to 600 guests</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📏</span>
+                            <div>
+                                <strong>Size</strong>
+                                <p>8,000 sq ft</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎵</span>
+                            <div>
+                                <strong>Sound System</strong>
+                                <p>Premium Audio</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎨</span>
+                            <div>
+                                <strong>Decor</strong>
+                                <p>Elegant Interiors</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">❄️</span>
+                            <div>
+                                <strong>Climate</strong>
+                                <p>Fully Air-Conditioned</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🅿️</span>
+                            <div>
+                                <strong>Parking</strong>
+                                <p>150+ Vehicles</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hall-amenities">
+                        <h3>Amenities</h3>
+                        <ul>
+                            <li>✓ Crystal Chandeliers</li>
+                            <li>✓ Luxury Bridal Suite</li>
+                            <li>✓ Premium Dining Area</li>
+                            <li>✓ Photo Booth Area</li>
+                            <li>✓ Free WiFi</li>
+                            <li>✓ Valet Parking Service</li>
+                        </ul>
+                    </div>
+                    <a th:href="@{/signup}" class="btn btn-primary btn-large">Book Hall 2</a>
+                </div>
+            </div>
+
+            <!-- Garden Venue (Outdoor) -->
+            <div class="hall-detail-card">
+                <div class="hall-image">
+                    <img th:src="@{/images/garden-venue.jpg}" alt="Garden Venue (Outdoor)" onerror="this.src='/images/3.jpg'">
+                    <div class="hall-badge hall-badge-value">Best Value</div>
+                </div>
+                <div class="hall-info">
+                    <h2>🌿 Garden Venue (Outdoor) - Natural Beauty</h2>
+                    <p class="hall-description">
+                        Beautiful outdoor setting perfect for weddings, garden parties, and celebrations in nature. 
+                        Features lush greenery, natural lighting, and a serene atmosphere for unforgettable events.
+                    </p>
+                    <div class="hall-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">👥</span>
+                            <div>
+                                <strong>Capacity</strong>
+                                <p>Up to 400 guests</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📏</span>
+                            <div>
+                                <strong>Size</strong>
+                                <p>5,000 sq ft</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎵</span>
+                            <div>
+                                <strong>Sound System</strong>
+                                <p>Standard Audio</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">💡</span>
+                            <div>
+                                <strong>Lighting</strong>
+                                <p>Ambient Lighting</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🌤️</span>
+                            <div>
+                                <strong>Weather</strong>
+                                <p>Covered Areas Available</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🅿️</span>
+                            <div>
+                                <strong>Parking</strong>
+                                <p>100+ Vehicles</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hall-amenities">
+                        <h3>Amenities</h3>
+                        <ul>
+                            <li>✓ Natural Garden Setting</li>
+                            <li>✓ Covered Pavilion Areas</li>
+                            <li>✓ Outdoor Catering Setup</li>
+                            <li>✓ Free WiFi</li>
+                            <li>✓ Garden Lighting</li>
+                            <li>✓ Ample Parking</li>
+                        </ul>
+                    </div>
+                    <a th:href="@{/signup}" class="btn btn-primary btn-large">Book Garden Venue</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Book Your Perfect Venue?</h2>
+            <p>Get started today and make your event unforgettable!</p>
+            <div class="cta-buttons">
+                <a th:href="@{/signup}" class="btn btn-large btn-primary">Book Now</a>
+                <a th:href="@{/contact}" class="btn btn-large btn-secondary">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
