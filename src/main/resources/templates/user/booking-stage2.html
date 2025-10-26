@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food & Payment - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/user/dashboard}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/user/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="booking-container">
+        <div class="container">
+            <div class="progress-bar">
+                <div class="progress-step active">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Hall & Date</div>
+                </div>
+                <div class="progress-step active">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Food & Payment</div>
+                </div>
+            </div>
+
+            <div class="booking-card">
+                <h2>Step 2: Food Selection and Payment</h2>
+                <div style="background: #e0f2fe; border: 1px solid #7dd3fc; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                    <strong>📋 Booking for:</strong> <span th:text="${user.name}"></span><br>
+                    <strong>🏛️ Hall:</strong> <span th:text="${hall}"></span> | 
+                    <strong>📅 Date:</strong> <span th:text="${#temporals.format(bookingDate, 'dd MMM yyyy')}"></span>
+                </div>
+                
+                <form id="stage2Form" th:action="@{/user/booking/submit}" method="post">
+                    <!-- Hidden fields from stage 1 -->
+                    <input type="hidden" name="hall" th:value="${hall}">
+                    <input type="hidden" name="bookingDate" th:value="${bookingDate}">
+
+                    <div class="form-group">
+                        <label>Select Food Option *</label>
+                        <div class="food-options">
+                            <div th:if="${#lists.isEmpty(foodItems)}" style="text-align: center; padding: 2rem; color: #6b7280;">
+                                <p>No food items available for booking.</p>
+                                <p>Please contact the manager to add food items.</p>
+                            </div>
+                            <label th:each="food : ${foodItems}" class="food-option">
+                                <input type="radio" name="foodType" th:value="${food.name}" 
+                                       th:data-price="${food.pricePerPerson}" required>
+                                <div class="food-card">
+                                    <h3 th:text="${food.name}"></h3>
+                                    <p class="food-type" th:text="${food.category}"></p>
+                                    <p class="food-price">₹<span th:text="${#numbers.formatDecimal(food.pricePerPerson, 1, 2)}"></span> per person</p>
+                                    <p th:if="${food.description}" class="food-description" th:text="${food.description}"></p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="peopleCount">Number of People *</label>
+                        <input type="number" id="peopleCount" name="peopleCount" 
+                               min="1" max="800" required 
+                               placeholder="Enter number of guests (max 800)">
+                        <small>Maximum 800 people allowed</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Payment Method *</label>
+                        <div class="payment-options">
+                            <label class="payment-option">
+                                <input type="radio" name="paymentType" value="CARD" required>
+                                <div class="payment-card">
+                                    <h4>💳 Card Payment</h4>
+                                    <p>Pay online securely</p>
+                                </div>
+                            </label>
+                            
+                            <label class="payment-option">
+                                <input type="radio" name="paymentType" value="CASH" required>
+                                <div class="payment-card">
+                                    <h4>💵 Cash Payment</h4>
+                                    <p>Pay at venue</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="total-amount-section">
+                        <h3>Total Amount: ₹<span id="totalAmount">0</span></h3>
+                    </div>
+
+                    <div class="form-actions">
+                        <a th:href="@{/user/booking/stage1}" class="btn btn-secondary">← Back</a>
+                        <button type="submit" class="btn btn-primary">📤 Submit Booking Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/booking.js}"></script>
+</body>
+</html>
