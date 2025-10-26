@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Halls - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/manager/dashboard}">NADCHATHRA MAHAL - Manager</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/manager/dashboard}">Dashboard</a>
+                <a th:href="@{/manager/halls}" class="active">Halls</a>
+                <a th:href="@{/manager/foods}">Foods</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div>
+                    <h2>🏛️ Hall Management</h2>
+                    <p>Manage all event halls</p>
+                </div>
+                <a th:href="@{/manager/halls/new}" class="btn btn-primary">➕ Add New Hall</a>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Hall Name</th>
+                            <th>Capacity</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(halls)}">
+                            <td colspan="6" style="text-align: center; padding: 2rem;">
+                                No halls found. Click "Add New Hall" to create one.
+                            </td>
+                        </tr>
+                        <tr th:each="hall : ${halls}">
+                            <td th:text="${hall.id}"></td>
+                            <td><strong th:text="${hall.name}"></strong></td>
+                            <td th:text="${hall.capacity} + ' people'"></td>
+                            <td th:text="${hall.description}"></td>
+                            <td>
+                                <span th:if="${hall.active}" class="badge badge-success">Active</span>
+                                <span th:unless="${hall.active}" class="badge badge-danger">Inactive</span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a th:href="@{/manager/halls/edit/{id}(id=${hall.id})}" 
+                                       class="btn btn-primary btn-small">✏️ Edit</a>
+                                    <form th:action="@{/manager/halls/delete/{id}(id=${hall.id})}" 
+                                          method="post" style="display: inline;"
+                                          onsubmit="return confirm('Are you sure you want to delete this hall?');">
+                                        <button type="submit" class="btn btn-danger btn-small">🗑️ Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+
