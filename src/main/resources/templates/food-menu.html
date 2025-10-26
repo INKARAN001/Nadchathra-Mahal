@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Menu - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/halls}">Our Halls</a>
+                <a th:href="@{/food-menu}">Food Menu</a>
+                <a th:href="@{/events}">Events</a>
+                <a th:href="@{/contact}">Contact Us</a>
+                <a th:href="@{/login}" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Exquisite Catering Options</h1>
+            <p>Delight your guests with our carefully curated menu selections</p>
+        </div>
+    </section>
+
+    <section class="food-menu-section">
+        <div class="container">
+            <!-- Green Delight - Vegetarian -->
+            <div class="food-package-card">
+                <div class="food-package-header vegetarian">
+                    <h2>🌿 Green Delight</h2>
+                    <p class="food-category">Pure Vegetarian</p>
+                    <div class="food-price">₹500 per person</div>
+                </div>
+                <div class="food-package-body">
+                    <p class="package-description">
+                        A wholesome vegetarian feast featuring fresh, organic ingredients and authentic flavors. 
+                        Perfect for health-conscious guests and traditional celebrations.
+                    </p>
+                    
+                    <div class="menu-section">
+                        <h3>🥗 Appetizers</h3>
+                        <ul class="menu-list">
+                            <li>Paneer Tikka</li>
+                            <li>Vegetable Spring Rolls</li>
+                            <li>Crispy Corn</li>
+                            <li>Hara Bhara Kabab</li>
+                            <li>Garden Fresh Salad Bar</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🍛 Main Course</h3>
+                        <ul class="menu-list">
+                            <li>Dal Makhani</li>
+                            <li>Paneer Butter Masala</li>
+                            <li>Mixed Vegetable Korma</li>
+                            <li>Jeera Rice</li>
+                            <li>Butter Naan & Roti</li>
+                            <li>Vegetable Biryani</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🍮 Desserts</h3>
+                        <ul class="menu-list">
+                            <li>Gulab Jamun</li>
+                            <li>Fresh Fruit Salad</li>
+                            <li>Ice Cream (Assorted Flavors)</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🥤 Beverages</h3>
+                        <ul class="menu-list">
+                            <li>Fresh Juice Bar</li>
+                            <li>Soft Drinks</li>
+                            <li>Mineral Water</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Royal Feast - Non-Vegetarian -->
+            <div class="food-package-card">
+                <div class="food-package-header non-vegetarian">
+                    <h2>👑 Royal Feast</h2>
+                    <p class="food-category">Non-Vegetarian Deluxe</p>
+                    <div class="food-price">₹700 per person</div>
+                </div>
+                <div class="food-package-body">
+                    <p class="package-description">
+                        An opulent spread combining the finest vegetarian and non-vegetarian dishes. 
+                        Experience culinary excellence with premium meats and exotic preparations.
+                    </p>
+                    
+                    <div class="menu-section">
+                        <h3>🍖 Appetizers</h3>
+                        <ul class="menu-list">
+                            <li>Chicken Tikka</li>
+                            <li>Mutton Seekh Kebab</li>
+                            <li>Fish Amritsari</li>
+                            <li>Tandoori Prawns</li>
+                            <li>Paneer Tikka</li>
+                            <li>Premium Salad Bar</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🍛 Main Course</h3>
+                        <ul class="menu-list">
+                            <li>Butter Chicken</li>
+                            <li>Mutton Rogan Josh</li>
+                            <li>Fish Curry</li>
+                            <li>Dal Makhani</li>
+                            <li>Paneer Butter Masala</li>
+                            <li>Chicken Biryani</li>
+                            <li>Jeera Rice</li>
+                            <li>Butter Naan, Roti & Paratha</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🍰 Desserts</h3>
+                        <ul class="menu-list">
+                            <li>Gulab Jamun</li>
+                            <li>Ras Malai</li>
+                            <li>Chocolate Brownie</li>
+                            <li>Premium Ice Cream</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🥤 Beverages</h3>
+                        <ul class="menu-list">
+                            <li>Fresh Juice Bar</li>
+                            <li>Mocktails</li>
+                            <li>Soft Drinks</li>
+                            <li>Mineral Water</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spicy Grill - Chicken Special -->
+            <div class="food-package-card">
+                <div class="food-package-header chicken-special">
+                    <h2>🔥 Spicy Grill</h2>
+                    <p class="food-category">Chicken Specialty</p>
+                    <div class="food-price">₹600 per person</div>
+                </div>
+                <div class="food-package-body">
+                    <p class="package-description">
+                        A paradise for chicken lovers! Featuring multiple preparation styles from tandoori to grilled, 
+                        each dish bursting with bold flavors and aromatic spices.
+                    </p>
+                    
+                    <div class="menu-section">
+                        <h3>🍗 Appetizers</h3>
+                        <ul class="menu-list">
+                            <li>Tandoori Chicken</li>
+                            <li>Chicken Tikka</li>
+                            <li>Chicken Malai Tikka</li>
+                            <li>Chicken Lollipop</li>
+                            <li>Grilled Chicken Wings</li>
+                            <li>Fresh Garden Salad</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🍛 Main Course</h3>
+                        <ul class="menu-list">
+                            <li>Butter Chicken</li>
+                            <li>Chicken Kadai</li>
+                            <li>Chicken Chettinad</li>
+                            <li>Grilled Chicken Steak</li>
+                            <li>Dal Tadka</li>
+                            <li>Mixed Vegetables</li>
+                            <li>Chicken Biryani</li>
+                            <li>Jeera Rice</li>
+                            <li>Butter Naan & Roti</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🍨 Desserts</h3>
+                        <ul class="menu-list">
+                            <li>Gulab Jamun</li>
+                            <li>Fresh Fruit Platter</li>
+                            <li>Ice Cream Sundae</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🥤 Beverages</h3>
+                        <ul class="menu-list">
+                            <li>Fresh Juice</li>
+                            <li>Soft Drinks</li>
+                            <li>Mineral Water</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ocean Treasure - Seafood -->
+            <div class="food-package-card">
+                <div class="food-package-header seafood">
+                    <h2>🌊 Ocean Treasure</h2>
+                    <p class="food-category">Premium Seafood</p>
+                    <div class="food-price">₹800 per person</div>
+                </div>
+                <div class="food-package-body">
+                    <p class="package-description">
+                        Dive into a luxurious seafood experience with the freshest catches from the ocean. 
+                        From grilled fish to succulent prawns, every bite is a coastal celebration.
+                    </p>
+                    
+                    <div class="menu-section">
+                        <h3>🦐 Appetizers</h3>
+                        <ul class="menu-list">
+                            <li>Tandoori Prawns</li>
+                            <li>Fish Amritsari</li>
+                            <li>Grilled Calamari</li>
+                            <li>Crab Cakes</li>
+                            <li>Lobster Bisque Soup</li>
+                            <li>Seafood Salad</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🐟 Main Course</h3>
+                        <ul class="menu-list">
+                            <li>Prawn Butter Garlic</li>
+                            <li>Fish Tikka Masala</li>
+                            <li>Lobster Thermidor</li>
+                            <li>Grilled Salmon</li>
+                            <li>Seafood Platter</li>
+                            <li>Dal Makhani</li>
+                            <li>Vegetable Jalfrezi</li>
+                            <li>Seafood Biryani</li>
+                            <li>Butter Rice</li>
+                            <li>Garlic Naan & Roti</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🍰 Desserts</h3>
+                        <ul class="menu-list">
+                            <li>Tiramisu</li>
+                            <li>Chocolate Lava Cake</li>
+                            <li>Fresh Fruit Tart</li>
+                            <li>Premium Ice Cream Selection</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-section">
+                        <h3>🍹 Beverages</h3>
+                        <ul class="menu-list">
+                            <li>Fresh Juice Bar</li>
+                            <li>Signature Mocktails</li>
+                            <li>Soft Drinks</li>
+                            <li>Sparkling Water</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="food-info-section">
+        <div class="container">
+            <h2>Why Choose Our Catering?</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon">🌟</div>
+                    <h3>Premium Quality</h3>
+                    <p>Only the freshest ingredients sourced daily from trusted suppliers</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">👨‍🍳</div>
+                    <h3>Expert Chefs</h3>
+                    <p>Experienced culinary team with years of expertise in event catering</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">🎨</div>
+                    <h3>Customization</h3>
+                    <p>Flexible menu options to suit your preferences and dietary requirements</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">✨</div>
+                    <h3>Presentation</h3>
+                    <p>Elegant food presentation and buffet setup for a memorable experience</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Book Your Event?</h2>
+            <p>Choose your perfect menu and let us handle the rest!</p>
+            <div class="cta-buttons">
+                <a th:href="@{/signup}" class="btn btn-large btn-primary">Book Now</a>
+                <a th:href="@{/contact}" class="btn btn-large btn-secondary">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
