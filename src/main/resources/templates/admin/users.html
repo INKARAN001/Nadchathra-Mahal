@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Bookings</a>
+                <a th:href="@{/admin/feedbacks}" class="btn btn-secondary">Feedbacks</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>User Management</h2>
+                <p>Manage registered user accounts and permissions</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="stats-grid" style="margin-bottom: 3rem;">
+                <div class="stat-card">
+                    <h3 th:text="${totalUsers}">0</h3>
+                    <p>Total Users</p>
+                </div>
+                <div class="stat-card">
+                    <h3 th:text="${activeUsers}">0</h3>
+                    <p>Active Users</p>
+                </div>
+                <div class="stat-card">
+                    <h3 th:text="${disabledUsers}">0</h3>
+                    <p>Disabled Users</p>
+                </div>
+                <div class="stat-card">
+                    <h3 th:text="${adminUsers}">0</h3>
+                    <p>Admin Users</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>All Users</h3>
+                
+                <div th:if="${users.isEmpty()}" style="text-align: center; padding: 3rem; color: #6b7280;">
+                    <p style="font-size: 1.1rem;">No users registered yet.</p>
+                </div>
+
+                <div class="table-container" th:if="${!users.isEmpty()}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Total Bookings</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user : ${users}">
+                                <td th:text="${user.id}"></td>
+                                <td>
+                                    <div th:text="${user.name}"></div>
+                                </td>
+                                <td th:text="${user.email}"></td>
+                                <td th:text="${user.phone}"></td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${user.role == 'ADMIN' ? 'badge-paid' : 'badge-accepted'}"
+                                          th:text="${user.role}"></span>
+                                </td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${user.enabled ? 'badge-accepted' : 'badge-rejected'}"
+                                          th:text="${user.enabled ? 'Active' : 'Disabled'}"></span>
+                                </td>
+                                <td>
+                                    <span th:text="${user.bookings != null ? user.bookings.size() : 0}"></span>
+                                </td>
+                                <td class="action-buttons">
+                                    <div th:if="${user.role == 'USER'}">
+                                        <!-- Toggle Status -->
+                                        <form th:action="@{/admin/user/toggle-status/{id}(id=${user.id})}" 
+                                              method="post" 
+                                              style="display: inline;"
+                                              onsubmit="return confirm('Are you sure you want to change this user status?');">
+                                            <button type="submit" 
+                                                    class="btn btn-small"
+                                                    th:classappend="${user.enabled ? 'btn-warning' : 'btn-success'}">
+                                                <span th:if="${user.enabled}">🔒 Disable</span>
+                                                <span th:if="${!user.enabled}">✅ Enable</span>
+                                            </button>
+                                        </form>
+                                        
+                                        <!-- Delete User -->
+                                        <form th:action="@{/admin/user/delete/{id}(id=${user.id})}" 
+                                              method="post" 
+                                              style="display: inline;"
+                                              onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone!');">
+                                            <button type="submit" class="btn btn-danger btn-small">
+                                                🗑️ Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <span th:if="${user.role == 'ADMIN'}" style="color: #6b7280;">
+                                        <small>⭐ Admin Account</small>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- User Statistics -->
+            <div class="user-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalUsers}">0</h3>
+                        <p>Total Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3 th:text="${activeUsers}">0</h3>
+                        <p>Active Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔒</div>
+                    <div class="stat-info">
+                        <h3 th:text="${disabledUsers}">0</h3>
+                        <p>Disabled Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-info">
+                        <h3 th:text="${adminUsers}">0</h3>
+                        <p>Administrators</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+
