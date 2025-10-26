@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Message - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .message-detail {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .message-detail.broadcast {
+            border-left: 4px solid #10b981;
+        }
+        .message-detail.direct {
+            border-left: 4px solid #f59e0b;
+        }
+        .message-header {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .message-type {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        .message-type.broadcast {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .message-type.direct {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .message-content {
+            color: #374151;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        .message-meta {
+            font-size: 0.9rem;
+            color: #6b7280;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .meta-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Dashboard</a>
+                <a th:href="@{/admin/users}" class="btn btn-secondary">Manage Users</a>
+                <a th:href="@{/admin/feedbacks}" class="btn btn-secondary">Manage Feedbacks</a>
+                <a th:href="@{/admin/messages}" class="btn btn-secondary">Messages</a>
+                <a th:href="@{/admin/messages/send}" class="btn btn-primary">Send Message</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>Message Details</h2>
+                <p>View detailed information about this message</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="message-detail" th:classappend="${message.messageType.toLowerCase()}">
+                <div class="message-header">
+                    <span class="message-type" th:classappend="${message.messageType.toLowerCase()}" th:text="${message.messageType}"></span>
+                    <h3 th:text="${message.subject}"></h3>
+                </div>
+                
+                <div class="message-content" th:text="${message.content}"></div>
+                
+                <div class="message-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">From</div>
+                        <div th:text="${message.sender.name}"></div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">To</div>
+                        <div th:if="${message.recipient != null}" th:text="${message.recipient.name}"></div>
+                        <div th:if="${message.recipient == null}">All Users</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Sent Date</div>
+                        <div th:text="${#temporals.format(message.createdAt, 'MMM dd, yyyy')}"></div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Sent Time</div>
+                        <div th:text="${#temporals.format(message.createdAt, 'HH:mm')}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a th:href="@{/admin/messages}" class="btn btn-secondary">← Back to Messages</a>
+                <a th:href="@{/admin/messages/edit/{id}(id=${message.id})}" class="btn btn-primary">✏️ Edit Message</a>
+                <form th:action="@{/admin/messages/delete/{id}(id=${message.id})}" 
+                      method="post" 
+                      style="display: inline;"
+                      onsubmit="return confirm('Are you sure you want to delete this message?')">
+                    <button type="submit" class="btn btn-danger">🗑️ Delete Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
