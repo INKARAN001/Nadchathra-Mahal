@@ -1,6 +1,7 @@
 package com.gsc.hallbooking.config;
 
 import com.gsc.hallbooking.service.CustomUserDetailsService;
+import com.gsc.hallbooking.service.LoginInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,12 +14,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * DEVELOPER: JADAVAN
+ * CRUD: Security Configuration
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     
     private final CustomUserDetailsService userDetailsService;
+    private final LoginInfoService loginInfoService;
     
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -44,6 +50,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/signup", "/login", "/halls", "/food-menu", "/events", "/contact", "/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/manager/**").hasRole("MANAGER")
                 .requestMatchers("/user/**").hasRole("USER")
                 .anyRequest().authenticated()
             )
@@ -51,10 +58,25 @@ public class SecurityConfig {
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
                 .successHandler((request, response, authentication) -> {
+                    // Record login information
+                    String email = authentication.getName();
+                    try {
+                        loginInfoService.recordLogin(email);
+                    } catch (Exception e) {
+                        // Log the error but don't prevent login
+                        System.err.println("Failed to record login for: " + email + " - " + e.getMessage());
+                    }
+                    
+                    // Redirect based on role
                     boolean isAdmin = authentication.getAuthorities().stream()
                             .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                    boolean isManager = authentication.getAuthorities().stream()
+                            .anyMatch(a -> a.getAuthority().equals("ROLE_MANAGER"));
+                    
                     if (isAdmin) {
                         response.sendRedirect("/admin/dashboard");
+                    } else if (isManager) {
+                        response.sendRedirect("/manager/dashboard");
                     } else {
                         response.sendRedirect("/user/dashboard");
                     }
