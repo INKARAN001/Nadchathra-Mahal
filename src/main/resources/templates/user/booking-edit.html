@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Booking - NADCHATHRA MAHAL</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .edit-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        
+        .edit-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        
+        .edit-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .edit-header h2 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-section {
+            margin-bottom: 2.5rem;
+        }
+        
+        .form-section h3 {
+            color: #374151;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+        
+        .calendar-container {
+            margin-top: 1rem;
+        }
+        
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .calendar-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 0.5rem;
+            background: #f3f4f6;
+            border-radius: 4px;
+        }
+        
+        .calendar-day {
+            text-align: center;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .calendar-day:hover:not(.disabled):not(.booked) {
+            background: #dbeafe;
+            border-color: #3b82f6;
+        }
+        
+        .calendar-day.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        .calendar-day.booked {
+            background: #fee2e2;
+            color: #991b1b;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+        
+        .calendar-day.disabled {
+            background: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .calendar-legend {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .legend-box.available {
+            background: white;
+        }
+        
+        .legend-box.booked {
+            background: #fee2e2;
+        }
+        
+        .legend-box.selected {
+            background: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1><a th:href="@{/}">NADCHATHRA MAHAL</a></h1>
+            </div>
+            <div class="nav-links">
+                <a th:href="@{/user/dashboard}">Dashboard</a>
+                <a th:href="@{/user/profile}">My Profile</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="edit-container">
+        <div class="edit-card">
+            <div class="edit-header">
+                <h2>Edit Booking</h2>
+                <p style="color: #6b7280;">Booking ID: #<span th:text="${booking.id}"></span></p>
+                <div style="background: #fef3c7; border: 1px solid #fde047; padding: 0.75rem; border-radius: 6px; margin-top: 1rem;">
+                    <strong>⚠️ Note:</strong> You can only edit bookings that are still pending admin confirmation.
+                </div>
+            </div>
+
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+
+            <form th:action="@{/user/booking/update/{id}(id=${booking.id})}" method="post" id="editBookingForm">
+                <!-- Personal Information (Read-Only) -->
+                <div class="form-section">
+                    <h3>📋 Personal Information</h3>
+                    <div style="background: #f3f4f6; border: 1px solid #d1d5db; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <p style="color: #6b7280; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                            ℹ️ Personal information is taken from your profile and cannot be edited here. Update your profile to change these details.
+                        </p>
+                    </div>
+                    
+                    <div class="detail-grid" style="display: grid; grid-template-columns: 200px 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="detail-label" style="font-weight: 600; color: #374151;">Full Name:</div>
+                        <div class="detail-value" style="color: #6b7280;" th:text="${booking.fullName}"></div>
+
+                        <div class="detail-label" style="font-weight: 600; color: #374151;">Email:</div>
+                        <div class="detail-value" style="color: #6b7280;" th:text="${booking.emailAddress}"></div>
+
+                        <div class="detail-label" style="font-weight: 600; color: #374151;">Phone:</div>
+                        <div class="detail-value" style="color: #6b7280;" th:text="${booking.phoneNumber}"></div>
+                    </div>
+                </div>
+
+                <!-- Event Details -->
+                <div class="form-section">
+                    <h3>🏛️ Event Details</h3>
+                    
+                    <div class="form-group">
+                        <label>Select Hall *</label>
+                        <div class="hall-options">
+                            <label th:each="hall : ${halls}" class="hall-option">
+                                <input type="radio" name="hall" th:value="${hall.name}" 
+                                       th:checked="${booking.hall == hall.name}" required onchange="loadCalendar()">
+                                <div class="hall-card">
+                                    <h3 th:text="${hall.name}"></h3>
+                                    <p th:text="${hall.description}"></p>
+                                    <p class="hall-capacity">Capacity: <span th:text="${hall.capacity}"></span> guests</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bookingDate">Select Date *</label>
+                        <input type="date" id="bookingDate" name="bookingDate" 
+                               th:value="${#temporals.format(booking.bookingDate, 'yyyy-MM-dd')}" 
+                               required 
+                               th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                               onchange="updateCalendarSelection()">
+                        <div class="help-text">Click on the calendar below to select an available date</div>
+                    </div>
+
+                    <!-- Calendar View -->
+                    <div class="calendar-container">
+                        <div id="calendarView"></div>
+                        <div class="calendar-legend">
+                            <div class="legend-item">
+                                <div class="legend-box available"></div>
+                                <span>Available</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-box booked"></div>
+                                <span>Booked</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-box selected"></div>
+                                <span>Selected</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Food & Payment -->
+                <div class="form-section">
+                    <h3>🍽️ Food & Payment Details</h3>
+                    
+                    <div class="form-group">
+                        <label for="foodType">Food Type *</label>
+                        <select id="foodType" name="foodType" required onchange="calculateTotal()">
+                            <option value="">-- Select Food Type --</option>
+                            <option th:each="food : ${foodItems}" 
+                                    th:value="${food.name}" 
+                                    th:selected="${booking.bookingDetails.foodType == food.name}"
+                                    th:text="${food.name + ' (' + food.category + ') - ₹' + #numbers.formatDecimal(food.pricePerPerson, 1, 2) + '/person'}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="peopleCount">Number of Guests *</label>
+                        <input type="number" id="peopleCount" name="peopleCount" th:value="${booking.bookingDetails.peopleCount}" required min="1" max="800" onchange="calculateTotal()">
+                        <div class="help-text">Maximum 800 guests</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentType">Payment Method *</label>
+                        <select id="paymentType" name="paymentType" required>
+                            <option value="CARD" th:selected="${booking.bookingDetails.paymentType == 'CARD'}">Credit/Debit Card</option>
+                            <option value="CASH" th:selected="${booking.bookingDetails.paymentType == 'CASH'}">Cash (Pay at Venue)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estimated Total Amount</label>
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #1f2937; padding: 1rem; background: #f3f4f6; border-radius: 6px; text-align: center;">
+                            ₹<span id="totalAmount">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a th:href="@{/user/booking/view/{id}(id=${booking.id})}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NADCHATHRA MAHAL System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const foodPrices = {
+            'Green Delight': 500,
+            'Royal Feast': 800,
+            'Spicy Grill': 750,
+            'Ocean Treasure': 1000
+        };
+
+        let bookedDates = [];
+        const currentBookingDate = /*[[${#temporals.format(booking.bookingDate, 'yyyy-MM-dd')}]]*/ '';
+
+        function calculateTotal() {
+            const foodType = document.getElementById('foodType').value;
+            const peopleCount = parseInt(document.getElementById('peopleCount').value) || 0;
+            
+            if (foodType && peopleCount > 0) {
+                const pricePerPerson = foodPrices[foodType] || 0;
+                const total = pricePerPerson * peopleCount;
+                document.getElementById('totalAmount').textContent = total.toLocaleString('en-IN');
+            } else {
+                document.getElementById('totalAmount').textContent = '0';
+            }
+        }
+
+        async function loadCalendar() {
+            const selectedHall = document.querySelector('input[name="hall"]:checked');
+            if (!selectedHall) return;
+            
+            const hall = selectedHall.value;
+            
+            try {
+                const response = await fetch(`/user/booking/api/booked-dates?hall=${encodeURIComponent(hall)}`);
+                bookedDates = await response.json();
+                generateCalendar();
+            } catch (error) {
+                console.error('Error loading booked dates:', error);
+                generateCalendar();
+            }
+        }
+
+        // Helper function to format date in local timezone (fixes timezone bug)
+        function formatDateLocal(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function generateCalendar() {
+            const calendarView = document.getElementById('calendarView');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normalize to start of day
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            
+            // Get current selected date
+            const bookingDateInput = document.getElementById('bookingDate');
+            const selectedDate = bookingDateInput.value;
+            
+            let html = '<h4 style="margin-bottom: 1rem;">' + 
+                      today.toLocaleString('default', { month: 'long', year: 'numeric' }) + 
+                      '</h4>';
+            
+            html += '<div class="calendar">';
+            
+            // Day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                html += `<div class="calendar-header">${day}</div>`;
+            });
+            
+            // Get first day of month and days in month
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // Empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="calendar-day disabled"></div>';
+            }
+            
+            // Days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(currentYear, currentMonth, day);
+                date.setHours(0, 0, 0, 0); // Normalize to start of day
+                const dateString = formatDateLocal(date); // Use local timezone formatting
+                const todayString = formatDateLocal(today);
+                const isPast = date < today && dateString !== todayString;
+                const isBooked = bookedDates.includes(dateString) && dateString !== currentBookingDate;
+                const isSelected = dateString === selectedDate;
+                
+                let className = 'calendar-day';
+                if (isPast) className += ' disabled';
+                else if (isBooked) className += ' booked';
+                else if (isSelected) className += ' selected';
+                
+                const onclick = (!isPast && !isBooked) ? `onclick="selectDate('${dateString}')"` : '';
+                
+                html += `<div class="${className}" ${onclick}>${day}</div>`;
+            }
+            
+            html += '</div>';
+            calendarView.innerHTML = html;
+        }
+
+        function selectDate(dateString) {
+            document.getElementById('bookingDate').value = dateString;
+            generateCalendar();
+        }
+
+        function updateCalendarSelection() {
+            generateCalendar();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateTotal();
+            loadCalendar();
+        });
+    </script>
+</body>
+</html>
+
