@@ -4,23 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4d7f7a7e-8ea5-48e5-b9bc-69fe602dd9b2" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/admin/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/admin/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/user/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/user/dashboard.html" afterDir="false" />
-    </list>
+    <list default="true" id="3b281d79-b1df-4e40-85fd-f09aa98a5638" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 0
-}</component>
-  <component name="ProjectId" id="33oZgezYuALlpf0nwo0euzYUvUt" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="34aF78BWfsHTRILSvu88ypnL9Lg" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -30,10 +23,12 @@
     "Application.HallBookingApplication.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/karan/OneDrive/Desktop/NadchthraMahal"
+    "last_opened_file_path": "C:/Users/karan/OneDrive/Desktop/Natchathra_mahal",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
   <component name="SharedIndexes">
@@ -45,11 +40,11 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="4d7f7a7e-8ea5-48e5-b9bc-69fe602dd9b2" name="Changes" comment="" />
-      <created>1759985503103</created>
+      <changelist id="3b281d79-b1df-4e40-85fd-f09aa98a5638" name="Changes" comment="" />
+      <created>1761443605734</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1759985503103</updated>
+      <updated>1761443605734</updated>
     </task>
     <servers />
   </component>
